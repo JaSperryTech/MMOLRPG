@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clicker Looter Monster Game</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="container">
+      <aside id="sidebar">
+        <h2>Menu</h2>
+        <button id="home-button">Home</button>
+        <button id="skilltree-button">Skill Tree</button>
+        <button id="inventory-button">Inventory</button>
+        <button id="rebirths-button">Rebirths</button>
+        <button id="achievements-button">Achievements</button>
+      </aside>
+      <main id="main-content">
+        <section id="main" class="game-section">
+          <h1>Clicker Looter Monster Game</h1>
+          <div id="info">
+            <p>Current World: <span id="current-world">1</span></p>
+            <p>Current Area: <span id="current-area">1</span></p>
+            <p>Current Round: <span id="current-round">1</span></p>
+          </div>
+
+          <div id="selection-container">
+            <label for="world-select">Select World:</label>
+            <select id="world-select" disabled></select>
+
+            <label for="area-select">Select Area:</label>
+            <select id="area-select" disable></select>
+
+            <button id="confirm-selection">Confirm Selection</button>
+          </div>
+
+          <div id="stats">
+            <div id="player-display">
+              <div id="health-bar-container">
+                <div id="health-bar">
+                  <div id="health-bar-fill"></div>
+                  <p id="name-label"><span id="monster-name">Nameless</span></p>
+                  <p id="health-label">
+                    <span id="monster-health">100</span>/<span
+                      id="monster-maxhealth"
+                      >100</span
+                    >
+                  </p>
+                  <p id="level-label">LV: <span id="monster-level">1</span></p>
+                </div>
+              </div>
+              <p>Player Rebirths: <span id="player-rebirths">0</span></p>
+              <p>Cols: <span id="cols">0</span></p>
+              <p>Player Level: <span id="player-level">1</span></p>
+              <p>
+                Player Experience: <span id="player-exp">0</span>/<span
+                  id="player-max-exp"
+                  >0</span
+                >
+              </p>
+              <p>Attack Power: <span id="attack-power">10</span></p>
+            </div>
+          </div>
+          <div id="attack-container">
+            <button id="attack-button">Attack!</button>
+          </div>
+        </section>
+        <section id="skilltree" class="game-section hidden">
+          <h1>Clicker Looter Monster Game</h1>
+          <h2>Skill Tree</h2>
+          <!-- Add more upgrade details as needed -->
+        </section>
+        <section id="inventoryB" class="game-section hidden">
+          <h1>Clicker Looter Monster Game</h1>
+          <h2>Inventory</h2>
+          <div id="inventory">
+            <div id="inventory-controls">
+              <button id="filter-all">All</button>
+              <button id="filter-weapons">Weapons</button>
+              <button id="filter-consumables">Consumables</button>
+              <button id="sort-name">Sort by Name</button>
+              <button id="sort-value">Sort by Value</button>
+            </div>
+            <div id="inventory-grid" class="inventory-grid"></div>
+          </div>
+        </section>
+        <section id="rebirths" class="game-section hidden">
+          <h1>Clicker Looter Monster Game</h1>
+          <h2>Rebirths</h2>
+          <button id="rebirth-button">Rebirth</button>
+        </section>
+        <section id="achievements" class="game-section hidden">
+          <h1>Clicker Looter Monster Game</h1>
+          <h2>Achievements</h2>
+          <p>Achievements: <span id="achievements-list">None</span></p>
+        </section>
+      </main>
+      <footer id="footer">
+        <p>&copy; 2024 Clicker Looter Monster Game. All rights reserved.</p>
+      </footer>
+    </div>
+
+    <script type="module" src="game.js"></script>
+  </body>
+</html>
