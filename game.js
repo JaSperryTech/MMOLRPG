@@ -13,7 +13,6 @@ let player = new Player(currentVersion);
 let achievements = new Achievements(player);
 let currentMonster = null;
 let selectedSkill = null;
-let selectedClass = null;
 
 // DOM Elements
 const homeButton = document.getElementById("home-button");
@@ -58,17 +57,24 @@ function startGame() {
 
 function savePlayerData() {
   try {
-    const playerData = {
-      version: player.version,
-      level: player.level,
-      experience: player.experience,
-      damage: player.damage,
-      inventory: player.inventory,
-      rebirths: player.rebirths,
-      cols: player.cols,
-      values: player.values,
-    };
-    localStorage.setItem("playerData", JSON.stringify(playerData));
+    localStorage.setItem("playerVersion", player.version);
+    localStorage.setItem("playerRebirths", player.rebirths);
+    localStorage.setItem("playerLevel", player.level);
+    localStorage.setItem("playerExperience", player.experience);
+    localStorage.setItem("playerClass", player.class);
+    localStorage.setItem("playerCols", player.cols);
+    localStorage.setItem("playerDamage", player.damage);
+    localStorage.setItem("playerSkillPoints", player.skillPoints);
+    localStorage.setItem("playerValues", JSON.stringify(player.values));
+    localStorage.setItem(
+      "playerHighestValues",
+      JSON.stringify(player.highestValues)
+    );
+    localStorage.setItem(
+      "playerUnlockedSkills",
+      JSON.stringify(player.unlockedSkills)
+    );
+    localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
   } catch (error) {
     console.error("Failed to save player data:", error);
   }
@@ -76,26 +82,54 @@ function savePlayerData() {
 
 function loadPlayerData() {
   try {
-    const savedData = localStorage.getItem("playerData");
-    if (savedData) {
-      const playerData = JSON.parse(savedData);
+    const version = localStorage.getItem("playerVersion");
+    const rebirths = localStorage.getItem("playerRebirths");
+    const level = localStorage.getItem("playerLevel");
+    const experience = localStorage.getItem("playerExperience");
+    const playerClass = localStorage.getItem("playerClass");
+    const cols = localStorage.getItem("playerCols");
+    const damage = localStorage.getItem("playerDamage");
+    const skillPoints = localStorage.getItem("playerSkillPoints");
+    const values = localStorage.getItem("playerValues");
+    const highestValues = localStorage.getItem("playerHighestValues");
+    const unlockedSkills = localStorage.getItem("playerUnlockedSkills");
+    const inventory = localStorage.getItem("playerInventory");
 
-      if (outdatedVersions.includes(playerData.version)) {
-        console.log(
-          `Wiping outdated save data from version: ${playerData.version}`
-        );
-        localStorage.removeItem("playerData"); // Wipe the data
+    if (version) {
+      if (outdatedVersions.includes(version)) {
+        console.log(`Wiping outdated save data from version: ${version}`);
+        localStorage.removeItem("playerVersion");
+        localStorage.removeItem("playerRebirths");
+        localStorage.removeItem("playerLevel");
+        localStorage.removeItem("playerExperience");
+        localStorage.removeItem("playerClass");
+        localStorage.removeItem("playerCols");
+        localStorage.removeItem("playerDamage");
+        localStorage.removeItem("playerSkillPoints");
+        localStorage.removeItem("playerValues");
+        localStorage.removeItem("playerHighestValues");
+        localStorage.removeItem("playerUnlockedSkills");
+        localStorage.removeItem("playerInventory");
         return; // Return to avoid loading old data
       }
 
       player = new Player(currentVersion); // Ensure player is initialized with current version
-      player.level = playerData.level || player.level;
-      player.experience = playerData.experience || player.experience;
-      player.damage = playerData.damage || player.damage;
-      player.inventory = playerData.inventory || [];
-      player.cols = playerData.cols || player.cols;
-      player.rebirths = playerData.rebirths || player.rebirths;
-      player.values = playerData.values || player.values;
+      player.version = version;
+      player.level = level ? parseInt(level, 10) : player.level;
+      player.experience = experience
+        ? parseInt(experience, 10)
+        : player.experience;
+      player.damage = damage ? parseInt(damage, 10) : player.damage;
+      player.inventory = inventory ? JSON.parse(inventory) : [];
+      player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
+      player.cols = cols ? parseInt(cols, 10) : player.cols;
+      player.values = values ? JSON.parse(values) : [];
+      player.highestValues = highestValues ? JSON.parse(highestValues) : [];
+      player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
+      player.skillPoints = skillPoints
+        ? parseInt(skillPoints, 10)
+        : player.skillPoints;
+      player.class = playerClass || player.class; // Handle class assignment
     }
   } catch (error) {
     console.error("Failed to load player data:", error);
@@ -343,7 +377,7 @@ function updateUI() {
 }
 
 function selectClass(className) {
-  selectedClass = className;
+  player.class = className;
 
   // Ensure the class-selection and skilltree elements exist
   const classSelectionElement = document.getElementById("chooseClass");
@@ -365,11 +399,11 @@ function selectClass(className) {
 }
 
 function generateSkillTree() {
-  if (!selectedClass) return; // Ensure a class is selected
+  if (!player.class) return; // Ensure a class is selected
 
   skillTreeContainer.innerHTML = ""; // Clear existing skills
 
-  const skillsForClass = skills[selectedClass];
+  const skillsForClass = skills[player.class];
 
   Object.keys(skillsForClass).forEach((subClass) => {
     const classContainer = document.createElement("div");

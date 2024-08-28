@@ -8,7 +8,7 @@ export default class Player {
     this.cols = 0;
     this.damage = 1;
     this.rebirths = 0;
-    this.skillPoints = 100;
+    this.skillPoints = 0;
     this.inventory = [];
     this.unlockedSkills = [];
     this.values = {
