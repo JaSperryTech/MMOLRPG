@@ -1,12 +1,16 @@
 // modules/Player.js
 export default class Player {
   constructor(version) {
+    this.version = version;
     this.level = 1;
     this.experience = 0;
+    this.class = null;
     this.cols = 0;
     this.damage = 1;
     this.rebirths = 0;
+    this.skillPoints = 100;
     this.inventory = [];
+    this.unlockedSkills = [];
     this.values = {
       round: 1,
       area: 1,
@@ -17,7 +21,6 @@ export default class Player {
       area: 0,
       world: 0,
     };
-    this.version = version;
   }
 
   gainExperience(amount) {
@@ -51,33 +54,12 @@ export default class Player {
     }
   }
 
-  takeDamage(amount) {
-    this.health -= amount;
-    if (this.health <= 0) {
-      this.health = 0;
-      // Handle player death or respawn logic here
-    }
-  }
-
-  heal(amount) {
-    this.health += amount;
-    if (this.health > 100) {
-      this.health = 100;
-    }
-  }
-
   addCols(amount) {
     this.cols += amount;
   }
 
   addItem(itemObject) {
     this.inventory.push({ Name: itemObject.Name, Value: itemObject.Value });
-  }
-
-  updateValues({ round, area, world }) {
-    if (round !== undefined) this.values.round = round;
-    if (area !== undefined) this.values.area = area;
-    if (world !== undefined) this.values.world = world;
   }
 
   rebirth() {
@@ -100,6 +82,9 @@ export default class Player {
     this.values.round = 0;
     this.values.area = 1;
     this.values.world = 1;
+    this.highestValues.round = 0;
+    this.highestValues.area = 1;
+    this.highestValues.world = 1;
   }
 
   applyRebirthBonuses() {

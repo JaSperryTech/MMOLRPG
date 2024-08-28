@@ -1,15 +1,19 @@
-const currentVersion = "0.3.0";
+// game.js
+const currentVersion = "0.4.0";
 const outdatedVersions = []; // List of outdated versions
 
 import Player from "./modules/player.js";
 import Monster from "./modules/monster.js";
 import Loot from "./modules/loot.js";
 import Achievements from "./modules/achievement.js";
+import { skills } from "./modules/skills.js";
 import { worlds } from "./modules/world.js";
 
 let player = new Player(currentVersion);
 let achievements = new Achievements(player);
 let currentMonster = null;
+let selectedSkill = null;
+let selectedClass = null;
 
 // DOM Elements
 const homeButton = document.getElementById("home-button");
@@ -33,6 +37,9 @@ const currentAreaElement = document.getElementById("current-area");
 const currentRoundElement = document.getElementById("current-round");
 const attackPowerElement = document.getElementById("attack-power");
 const achievementsListElement = document.getElementById("achievements-list");
+const skillTreeContainer = document.getElementById("skill-tree-container");
+const skillDescriptionElement = document.getElementById("skill-description");
+const unlockSkillButton = document.getElementById("unlock-skill-button");
 
 const healthBarFill = document.getElementById("health-bar-fill");
 const worldSelect = document.getElementById("world-select");
@@ -81,7 +88,7 @@ function loadPlayerData() {
         return; // Return to avoid loading old data
       }
 
-      player = new Player(playerData.version); // Use saved version
+      player = new Player(currentVersion); // Ensure player is initialized with current version
       player.level = playerData.level || player.level;
       player.experience = playerData.experience || player.experience;
       player.damage = playerData.damage || player.damage;
@@ -335,6 +342,79 @@ function updateUI() {
   populateAreaOptions();
 }
 
+function selectClass(className) {
+  selectedClass = className;
+
+  // Ensure the class-selection and skilltree elements exist
+  const classSelectionElement = document.getElementById("chooseClass");
+  const skillTreeElement = document.getElementById("skilltree");
+
+  if (!classSelectionElement || !skillTreeElement) {
+    console.error(
+      "Required elements for class selection or skill tree not found."
+    );
+    return;
+  }
+
+  // Hide class selection and show skill tree
+  classSelectionElement.classList.add("hidden");
+  skillTreeElement.classList.remove("hidden");
+
+  // Generate the skill tree based on the selected class
+  generateSkillTree();
+}
+
+function generateSkillTree() {
+  if (!selectedClass) return; // Ensure a class is selected
+
+  skillTreeContainer.innerHTML = ""; // Clear existing skills
+
+  const skillsForClass = skills[selectedClass];
+
+  Object.keys(skillsForClass).forEach((subClass) => {
+    const classContainer = document.createElement("div");
+    classContainer.classList.add("skill-class-container");
+
+    const classTitle = document.createElement("h3");
+    classTitle.textContent =
+      subClass.charAt(0).toUpperCase() + subClass.slice(1);
+    classContainer.appendChild(classTitle);
+
+    Object.values(skillsForClass[subClass]).forEach((skill) => {
+      const skillElement = document.createElement("div");
+      skillElement.classList.add("skill");
+
+      skillElement.innerHTML = `
+        <p><strong>${skill.name}</strong></p>
+        <p>Cost: ${skill.cost} Points</p>
+      `;
+
+      skillElement.addEventListener("click", () => {
+        selectSkill(skill);
+      });
+
+      classContainer.appendChild(skillElement);
+    });
+
+    skillTreeContainer.appendChild(classContainer);
+  });
+}
+
+function selectSkill(skill) {
+  selectedSkill = skill;
+  skillDescriptionElement.textContent = skill.description;
+}
+
+unlockSkillButton.addEventListener("click", () => {
+  if (selectedSkill && selectedSkill.canUnlock(player)) {
+    selectedSkill.applyEffect(player);
+    player.skillPoints -= selectedSkill.cost;
+    updateUI();
+  } else {
+    alert("Not enough skill points or prerequisites not met.");
+  }
+});
+
 function populateWorldOptions() {
   worldSelect.innerHTML = ""; // Clear existing options
   Object.keys(worlds).forEach((worldKey) => {
@@ -443,6 +523,24 @@ function setupEventListeners() {
     } else {
       alert("Invalid world or area selection. Please choose again.");
     }
+  });
+
+  // New class selection listeners
+  document.getElementById("select-warrior").addEventListener("click", () => {
+    player.class = "warrior";
+    selectClass("warrior");
+  });
+
+  document.getElementById("select-mage").addEventListener("click", () => {
+    player.class = "mage";
+    document.getElementById("chooseClass").classList.add("hidden");
+    generateSkillTree();
+  });
+
+  document.getElementById("select-archer").addEventListener("click", () => {
+    player.class = "archer";
+    document.getElementById("chooseClass").classList.add("hidden");
+    generateSkillTree();
   });
 }
 
