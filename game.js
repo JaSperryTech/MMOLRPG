@@ -50,8 +50,13 @@ startGame();
 
 function startGame() {
   loadPlayerData(); // Load saved data
+
+  // Update area options based on current world and progress
+  populateWorldOptions();
+  populateAreaOptions();
+  updateMonster();
+
   updateUI();
-  spawnMonster();
   setupEventListeners();
 }
 
@@ -136,9 +141,113 @@ function loadPlayerData() {
   }
 }
 
-// Continue from here \\
+// Update the UI with dynamic area options based on player's progress
+function updateUI() {
+  updatePlayerStatsUI();
+  updateMonsterUI();
+  updateInventoryDisplay(player);
+  updateAchievementsList();
+  updateWorldAndAreaSelection();
+}
 
-function spawnMonster() {
+function updatePlayerStatsUI() {
+  playerLevelElement.textContent = player.level;
+  playerExperienceElement.textContent = player.experience;
+  playerMaxExperienceElement.textContent = player.getExperienceToNextLevel();
+  playerColsElement.textContent = player.cols;
+  playerRebirthsElement.textContent = player.rebirths;
+  playerDamageElement.textContent = player.damage;
+}
+
+function updateMonsterUI() {
+  // Calculate the percentage of health
+  const healthPercentage =
+    (currentMonster.health / currentMonster.maxhealth) * 100;
+
+  // Set the width of the health bar fill
+  healthBarFillElement.style.width = `${healthPercentage}%`;
+
+  monsterNameElement.textContent = currentMonster.name;
+  monsterHealthElement.textContent = currentMonster.health;
+  monsterMaxHealthElement.textContent = currentMonster.maxhealth;
+  monsterLevelElement.textContent = currentMonster.level;
+}
+
+function updateInventoryDisplay(player) {
+  renderInventory(player.inventory);
+}
+
+function renderInventory(items) {
+  const inventoryGrid = document.getElementById("inventory-grid");
+  inventoryGrid.innerHTML = ""; // Clear current items
+
+  items.forEach((item) => {
+    const itemElement = document.createElement("div");
+    itemElement.classList.add("inventory-item");
+    itemElement.innerHTML = `<p>${item.Name}</p><p>Value: ${item.Value}</p>`;
+    inventoryGrid.appendChild(itemElement);
+  });
+}
+
+function updateAchievementsList() {
+  const unlockedAchievements = Object.keys(achievements.achievements).filter(
+    (key) => achievements.achievements[key].unlocked
+  );
+  achievementsListElement.textContent =
+    unlockedAchievements.length > 0 ? unlockedAchievements.join(", ") : "None";
+}
+
+function updateWorldAndAreaSelection() {
+  currentWorldElement.textContent = player.values.world;
+  currentAreaElement.textContent = player.values.area;
+  currentRoundElement.textContent = player.values.round;
+
+  const canSelect = player.highestValues.area >= player.values.area;
+  worldSelectElement.disabled = !canSelect;
+  areaSelectElement.disabled = !canSelect;
+  confirmSelectionButton.disabled = !canSelect;
+
+  populateWorldOptions();
+  populateAreaOptions();
+}
+
+function populateWorldOptions() {
+  worldSelectElement.innerHTML = ""; // Clear existing options
+  Object.keys(worlds).forEach((worldKey) => {
+    const option = document.createElement("option");
+    option.value = parseInt(worldKey.replace("World", ""), 10);
+    option.textContent = worldKey;
+    worldSelectElement.appendChild(option);
+  });
+
+  // Select the current world
+  worldSelectElement.value = player.values.world;
+}
+
+function populateAreaOptions() {
+  const currentWorld = worlds[`World${player.values.world}`];
+  if (!currentWorld) {
+    console.error("Invalid world selection");
+    return;
+  }
+
+  areaSelectElement.innerHTML = ""; // Clear previous options
+
+  const maxArea = player.highestValues.area;
+  for (let i = 1; i <= maxArea; i++) {
+    if (currentWorld.Areas[i]) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = `Area ${i}`;
+      areaSelectElement.appendChild(option);
+    }
+  }
+
+  // Ensure the current area is selected
+  areaSelectElement.value = player.values.area;
+}
+
+function updateMonster() {
   const { world: worldIndex, area: areaIndex } = player.values;
 
   if (
@@ -156,27 +265,6 @@ function spawnMonster() {
   currentMonster = new Monster(randomMonsterName, monsterLevel);
 
   updateMonsterUI();
-}
-
-function updateMonsterUI() {
-  if (currentMonster) {
-    monsterNameElement.textContent = currentMonster.name;
-    monsterHealthElement.textContent = currentMonster.health;
-    monsterMaxHealthElement.textContent = currentMonster.maxhealth;
-    updateHealthBar(
-      currentMonster.health,
-      currentMonster.maxhealth,
-      currentMonster.level
-    );
-  }
-}
-
-function attackMonsterLogic() {
-  if (!currentMonster) return false;
-
-  const isDead = currentMonster.takeDamage(player.damage);
-  updateMonsterUI();
-  return isDead;
 }
 
 function handleInvalidWorldOrArea() {
@@ -243,24 +331,139 @@ function getMonsterLevel() {
   return level;
 }
 
-function attackMonster() {
-  // Calculate the new health percentage
-  const healthPercentage =
-    (currentMonster.health / currentMonster.maxhealth) * 100;
+function setupEventListeners() {
+  homeButton.addEventListener("click", () => switchSection("main"));
+  skilltreeButton.addEventListener("click", () => switchSection("skilltree"));
+  inventoryButton.addEventListener("click", () => switchSection("inventoryB"));
+  rebirthsButton.addEventListener("click", () => switchSection("rebirths"));
+  achievementsButton.addEventListener("click", () =>
+    switchSection("achievements")
+  );
 
-  // Animate the health bar to the new percentage
-  healthBarFill.style.transition = "width 0.5s ease";
-  healthBarFill.style.width = healthPercentage + "%";
+  attackButton.addEventListener("click", attackMonster);
+
+  // Adding Event Listener for World and Area Selection
+  confirmSelectionButton.addEventListener("click", () => {
+    const selectedWorld = parseInt(worldSelectElement.value, 10);
+    const selectedArea = parseInt(areaSelectElement.value, 10);
+
+    if (
+      !isNaN(selectedWorld) &&
+      !isNaN(selectedArea) &&
+      worlds[`World${selectedWorld}`] &&
+      worlds[`World${selectedWorld}`].Areas[selectedArea] !== undefined
+    ) {
+      player.values.world = selectedWorld;
+      player.values.area = selectedArea;
+      player.values.round = 0;
+      updateUI(); // Update UI after selection
+      updateMonster(); // Spawn new monster based on selection
+    } else {
+      alert("Invalid world or area selection. Please choose again.");
+    }
+  });
+
+  // New class selection listeners
+  document.getElementById("select-warrior").addEventListener("click", () => {
+    player.class = "warrior";
+    selectClass("warrior");
+  });
+
+  document.getElementById("select-mage").addEventListener("click", () => {
+    player.class = "mage";
+    selectClass("mage");
+  });
+
+  document.getElementById("select-archer").addEventListener("click", () => {
+    player.class = "archer";
+    selectClass("archer");
+  });
+
+  unlockedSkillButton.addEventListener("click", () => {
+    if (selectedSkill && selectedSkill.canUnlock(player)) {
+      selectedSkill.applyEffect(player);
+      player.skillPoints -= selectedSkill.cost;
+      updateUI();
+    } else {
+      alert("Not enough skill points or prerequisites not met.");
+    }
+  });
+
+  document.getElementById("filter-all").addEventListener("click", () => {
+    renderInventory(player.inventory);
+  });
+
+  document.getElementById("filter-weapons").addEventListener("click", () => {
+    const filteredItems = player.inventory.filter(
+      (item) => item.type === "Weapon"
+    );
+    renderInventory(filteredItems);
+  });
+
+  document
+    .getElementById("filter-consumables")
+    .addEventListener("click", () => {
+      const filteredItems = player.inventory.filter(
+        (item) => item.type === "Consumable"
+      );
+      renderInventory(filteredItems);
+    });
+
+  // Sorting
+  document.getElementById("sort-name").addEventListener("click", () => {
+    const sortedItems = [...player.inventory].sort((a, b) =>
+      a.Name.localeCompare(b.Name)
+    );
+    renderInventory(sortedItems);
+  });
+
+  document.getElementById("sort-value").addEventListener("click", () => {
+    const sortedItems = [...player.inventory].sort((a, b) => b.Value - a.Value);
+    renderInventory(sortedItems);
+  });
+
+  document.getElementById("rebirth-button").addEventListener("click", () => {
+    if (player.level >= 100) {
+      player.rebirth();
+      updateUI();
+      savePlayerData();
+    } else {
+      console.log("Need to be level 100 or Higher");
+    }
+  });
+}
+
+// Switch between different sections of the game
+function switchSection(section) {
+  // Hide all sections
+  document.querySelectorAll(".game-section").forEach((el) => {
+    el.classList.add("hidden");
+  });
+
+  // Show the selected section
+  document.getElementById(section).classList.remove("hidden");
+}
+
+function attackMonster() {
+  updateMonsterUI();
 
   // Attack the monster
   const isDead = attackMonsterLogic();
 
   if (isDead) {
     handleMonsterDeath();
-    spawnMonster(); // Spawn new monster
+    updateMonster(); // Spawn new monster
   } else {
-    updatePlayerStats(); // Update player stats if the monster is not dead
+    updatePlayerStatsUI(); // Update player stats if the monster is not dead
   }
+}
+
+function attackMonsterLogic() {
+  if (!currentMonster) return false;
+
+  const isDead = currentMonster.takeDamage(player.damage);
+  updateMonsterUI();
+  return isDead;
 }
 
 function handleMonsterDeath() {
@@ -303,79 +506,6 @@ function updateGameProgression() {
 
   // Update the UI elements
   updateUI();
-}
-
-function updatePlayerStats() {
-  playerLevelElement.textContent = player.level;
-  playerExpElement.textContent = player.experience;
-  playerMaxExpElement.textContent = player.getExperienceToNextLevel();
-  playerColsElement.textContent = player.cols;
-  playerRebirthElement.textContent = player.rebirths;
-}
-
-function updateHealthBar(currentHealth, maxHealth, level) {
-  // Calculate the percentage of health
-  const healthPercentage = (currentHealth / maxHealth) * 100;
-
-  // Set the width of the health bar fill
-  healthBarFill.style.width = `${healthPercentage}%`;
-
-  // Optionally update the text or other elements related to health and level
-  monsterHealthElement.textContent = `${currentHealth}`;
-  monsterLevelElement.textContent = `${level}`;
-}
-
-function renderInventory(items) {
-  const inventoryGrid = document.getElementById("inventory-grid");
-  inventoryGrid.innerHTML = ""; // Clear current items
-
-  items.forEach((item) => {
-    const itemElement = document.createElement("div");
-    itemElement.classList.add("inventory-item");
-    itemElement.innerHTML = `<p>${item.Name}</p><p>Value: ${item.Value}</p>`;
-    inventoryGrid.appendChild(itemElement);
-  });
-}
-
-function updateInventoryDisplay(player) {
-  renderInventory(player.inventory);
-}
-
-function updateAchievementsList() {
-  const unlockedAchievements = Object.keys(achievements.achievements).filter(
-    (key) => achievements.achievements[key].unlocked
-  );
-  achievementsListElement.textContent =
-    unlockedAchievements.length > 0 ? unlockedAchievements.join(", ") : "None";
-}
-
-// Update the UI with dynamic area options based on player's progress
-function updateUI() {
-  currentWorldElement.textContent = player.values.world;
-  currentAreaElement.textContent = player.values.area;
-  currentRoundElement.textContent = player.values.round;
-
-  attackPowerElement.textContent = player.damage;
-  playerLevelElement.textContent = player.level;
-  playerExpElement.textContent = player.experience;
-  playerMaxExpElement.textContent = player.getExperienceToNextLevel();
-  playerColsElement.textContent = player.cols;
-  playerRebirthElement.textContent = player.rebirths;
-
-  updateMonsterUI();
-
-  updateInventoryDisplay(player);
-  updateAchievementsList(player);
-
-  // Enable or disable world and area selection
-  const canSelect = player.highestValues.area >= player.values.area;
-  worldSelect.disabled = !canSelect;
-  areaSelect.disabled = !canSelect;
-  confirmSelectionButton.disabled = !canSelect;
-
-  // Update area options based on current world and progress
-  populateWorldOptions();
-  populateAreaOptions();
 }
 
 function selectClass(className) {
@@ -439,154 +569,4 @@ function generateSkillTree() {
 function selectSkill(skill) {
   selectedSkill = skill;
   skillDescriptionElement.textContent = skill.description;
-}
-
-unlockSkillButton.addEventListener("click", () => {
-  if (selectedSkill && selectedSkill.canUnlock(player)) {
-    selectedSkill.applyEffect(player);
-    player.skillPoints -= selectedSkill.cost;
-    updateUI();
-  } else {
-    alert("Not enough skill points or prerequisites not met.");
-  }
-});
-
-function populateWorldOptions() {
-  worldSelect.innerHTML = ""; // Clear existing options
-  Object.keys(worlds).forEach((worldKey) => {
-    const option = document.createElement("option");
-    option.value = parseInt(worldKey.replace("World", ""), 10);
-    option.textContent = worldKey;
-    worldSelect.appendChild(option);
-  });
-
-  // Select the current world
-  worldSelect.value = player.values.world;
-}
-
-function populateAreaOptions() {
-  const currentWorld = worlds[`World${player.values.world}`];
-  if (!currentWorld) {
-    console.error("Invalid world selection");
-    return;
-  }
-
-  areaSelect.innerHTML = ""; // Clear previous options
-
-  const maxArea = player.highestValues.area;
-  for (let i = 1; i <= maxArea; i++) {
-    if (currentWorld.Areas[i]) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.textContent = `Area ${i}`;
-      areaSelect.appendChild(option);
-    }
-  }
-
-  // Ensure the current area is selected
-  areaSelect.value = player.values.area;
-}
-
-function setupEventListeners() {
-  attackButton.addEventListener("click", attackMonster);
-  homeButton.addEventListener("click", () => switchSection("main"));
-  skilltreeButton.addEventListener("click", () => switchSection("skilltree"));
-  inventoryButton.addEventListener("click", () => switchSection("inventoryB"));
-  rebirthsButton.addEventListener("click", () => switchSection("rebirths"));
-  achievementsButton.addEventListener("click", () =>
-    switchSection("achievements")
-  );
-
-  document.getElementById("rebirth-button").addEventListener("click", () => {
-    if (player.level >= 100) {
-      player.rebirth();
-      updateUI();
-      savePlayerData();
-    } else {
-      console.log("Need to be level 100 or Higher");
-    }
-  });
-
-  document.getElementById("filter-all").addEventListener("click", () => {
-    renderInventory(player.inventory);
-  });
-
-  document.getElementById("filter-weapons").addEventListener("click", () => {
-    const filteredItems = player.inventory.filter(
-      (item) => item.type === "Weapon"
-    );
-    renderInventory(filteredItems);
-  });
-
-  document
-    .getElementById("filter-consumables")
-    .addEventListener("click", () => {
-      const filteredItems = player.inventory.filter(
-        (item) => item.type === "Consumable"
-      );
-      renderInventory(filteredItems);
-    });
-
-  // Sorting
-  document.getElementById("sort-name").addEventListener("click", () => {
-    const sortedItems = [...player.inventory].sort((a, b) =>
-      a.Name.localeCompare(b.Name)
-    );
-    renderInventory(sortedItems);
-  });
-
-  document.getElementById("sort-value").addEventListener("click", () => {
-    const sortedItems = [...player.inventory].sort((a, b) => b.Value - a.Value);
-    renderInventory(sortedItems);
-  });
-
-  // Adding Event Listener for World and Area Selection
-  confirmSelectionButton.addEventListener("click", () => {
-    const selectedWorld = parseInt(worldSelect.value, 10);
-    const selectedArea = parseInt(areaSelect.value, 10);
-
-    if (
-      !isNaN(selectedWorld) &&
-      !isNaN(selectedArea) &&
-      worlds[`World${selectedWorld}`] &&
-      worlds[`World${selectedWorld}`].Areas[selectedArea] !== undefined
-    ) {
-      player.values.world = selectedWorld;
-      player.values.area = selectedArea;
-      player.values.round = 0;
-      updateUI(); // Update UI after selection
-      spawnMonster(); // Spawn new monster based on selection
-    } else {
-      alert("Invalid world or area selection. Please choose again.");
-    }
-  });
-
-  // New class selection listeners
-  document.getElementById("select-warrior").addEventListener("click", () => {
-    player.class = "warrior";
-    selectClass("warrior");
-  });
-
-  document.getElementById("select-mage").addEventListener("click", () => {
-    player.class = "mage";
-    document.getElementById("chooseClass").classList.add("hidden");
-    generateSkillTree();
-  });
-
-  document.getElementById("select-archer").addEventListener("click", () => {
-    player.class = "archer";
-    document.getElementById("chooseClass").classList.add("hidden");
-    generateSkillTree();
-  });
-}
-
-// Switch between different sections of the game
-function switchSection(section) {
-  // Hide all sections
-  document.querySelectorAll(".game-section").forEach((el) => {
-    el.classList.add("hidden");
-  });
-
-  // Show the selected section
-  document.getElementById(section).classList.remove("hidden");
 }
