@@ -14,36 +14,36 @@ let achievements = new Achievements(player);
 let currentMonster = null;
 let selectedSkill = null;
 
-// DOM Elements
+//--  DOM Elements --\\
 const homeButton = document.getElementById("home-button");
 const skilltreeButton = document.getElementById("skilltree-button");
 const inventoryButton = document.getElementById("inventory-button");
 const rebirthsButton = document.getElementById("rebirths-button");
 const achievementsButton = document.getElementById("achievements-button");
-
-const attackButton = document.getElementById("attack-button");
-const monsterNameElement = document.getElementById("monster-name");
-const monsterHealthElement = document.getElementById("monster-health");
-const monsterMaxHealthElement = document.getElementById("monster-maxhealth");
-const monsterLevelElement = document.getElementById("monster-level");
-const playerLevelElement = document.getElementById("player-level");
-const playerExpElement = document.getElementById("player-exp");
-const playerMaxExpElement = document.getElementById("player-max-exp");
-const playerColsElement = document.getElementById("cols");
-const playerRebirthElement = document.getElementById("player-rebirths");
 const currentWorldElement = document.getElementById("current-world");
 const currentAreaElement = document.getElementById("current-area");
 const currentRoundElement = document.getElementById("current-round");
-const attackPowerElement = document.getElementById("attack-power");
-const achievementsListElement = document.getElementById("achievements-list");
+const worldSelectElement = document.getElementById("world-select");
+const areaSelectElement = document.getElementById("area-select");
+const confirmSelectionButton = document.getElementById("confirm-selection");
+const healthBarFillElement = document.getElementById("health-bar-fill");
+const monsterNameElement = document.getElementById("monster-name");
+const monsterHealthElement = document.getElementById("monster-health");
+const monsterMaxHealthElement = document.getElementById("monster-max-health");
+const monsterLevelElement = document.getElementById("monster-level");
+const playerRebirthsElement = document.getElementById("player-rebirths");
+const playerColsElement = document.getElementById("player-cols");
+const playerLevelElement = document.getElementById("player-level");
+const playerExperienceElement = document.getElementById("player-experience");
+const playerMaxExperienceElement = document.getElementById(
+  "player-max-experience"
+);
+const playerDamageElement = document.getElementById("player-damage");
+const attackButton = document.getElementById("attack-button");
 const skillTreeContainer = document.getElementById("skill-tree-container");
 const skillDescriptionElement = document.getElementById("skill-description");
-const unlockSkillButton = document.getElementById("unlock-skill-button");
-
-const healthBarFill = document.getElementById("health-bar-fill");
-const worldSelect = document.getElementById("world-select");
-const areaSelect = document.getElementById("area-select");
-const confirmSelectionButton = document.getElementById("confirm-selection");
+const unlockedSkillButton = document.getElementById("unlock-skill-button");
+const achievementsListElement = document.getElementById("achievements-list");
 
 // Start the game
 startGame();
@@ -135,6 +135,8 @@ function loadPlayerData() {
     console.error("Failed to load player data:", error);
   }
 }
+
+// Continue from here \\
 
 function spawnMonster() {
   const { world: worldIndex, area: areaIndex } = player.values;
