@@ -1,43 +1,49 @@
-const currentVersion = "0.3.0";
+// game.js
+const currentVersion = "0.4.0";
 const outdatedVersions = []; // List of outdated versions
 
 import Player from "./modules/player.js";
 import Monster from "./modules/monster.js";
 import Loot from "./modules/loot.js";
 import Achievements from "./modules/achievement.js";
+import { skills } from "./modules/skills.js";
 import { worlds } from "./modules/world.js";
 
 let player = new Player(currentVersion);
 let achievements = new Achievements(player);
 let currentMonster = null;
+let selectedSkill = null;
 
-// DOM Elements
+//--  DOM Elements --\\
 const homeButton = document.getElementById("home-button");
 const skilltreeButton = document.getElementById("skilltree-button");
 const inventoryButton = document.getElementById("inventory-button");
 const rebirthsButton = document.getElementById("rebirths-button");
 const achievementsButton = document.getElementById("achievements-button");
-
-const attackButton = document.getElementById("attack-button");
-const monsterNameElement = document.getElementById("monster-name");
-const monsterHealthElement = document.getElementById("monster-health");
-const monsterMaxHealthElement = document.getElementById("monster-maxhealth");
-const monsterLevelElement = document.getElementById("monster-level");
-const playerLevelElement = document.getElementById("player-level");
-const playerExpElement = document.getElementById("player-exp");
-const playerMaxExpElement = document.getElementById("player-max-exp");
-const playerColsElement = document.getElementById("cols");
-const playerRebirthElement = document.getElementById("player-rebirths");
 const currentWorldElement = document.getElementById("current-world");
 const currentAreaElement = document.getElementById("current-area");
 const currentRoundElement = document.getElementById("current-round");
-const attackPowerElement = document.getElementById("attack-power");
-const achievementsListElement = document.getElementById("achievements-list");
-
-const healthBarFill = document.getElementById("health-bar-fill");
-const worldSelect = document.getElementById("world-select");
-const areaSelect = document.getElementById("area-select");
+const worldSelectElement = document.getElementById("world-select");
+const areaSelectElement = document.getElementById("area-select");
 const confirmSelectionButton = document.getElementById("confirm-selection");
+const healthBarFillElement = document.getElementById("health-bar-fill");
+const monsterNameElement = document.getElementById("monster-name");
+const monsterHealthElement = document.getElementById("monster-health");
+const monsterMaxHealthElement = document.getElementById("monster-max-health");
+const monsterLevelElement = document.getElementById("monster-level");
+const playerRebirthsElement = document.getElementById("player-rebirths");
+const playerColsElement = document.getElementById("player-cols");
+const playerLevelElement = document.getElementById("player-level");
+const playerExperienceElement = document.getElementById("player-experience");
+const playerMaxExperienceElement = document.getElementById(
+  "player-max-experience"
+);
+const playerDamageElement = document.getElementById("player-damage");
+const attackButton = document.getElementById("attack-button");
+const skillTreeContainer = document.getElementById("skill-tree-container");
+const skillDescriptionElement = document.getElementById("skill-description");
+const unlockedSkillButton = document.getElementById("unlock-skill-button");
+const achievementsListElement = document.getElementById("achievements-list");
 
 // Start the game
 startGame();
@@ -51,17 +57,24 @@ function startGame() {
 
 function savePlayerData() {
   try {
-    const playerData = {
-      version: player.version,
-      level: player.level,
-      experience: player.experience,
-      damage: player.damage,
-      inventory: player.inventory,
-      rebirths: player.rebirths,
-      cols: player.cols,
-      values: player.values,
-    };
-    localStorage.setItem("playerData", JSON.stringify(playerData));
+    localStorage.setItem("playerVersion", player.version);
+    localStorage.setItem("playerRebirths", player.rebirths);
+    localStorage.setItem("playerLevel", player.level);
+    localStorage.setItem("playerExperience", player.experience);
+    localStorage.setItem("playerClass", player.class);
+    localStorage.setItem("playerCols", player.cols);
+    localStorage.setItem("playerDamage", player.damage);
+    localStorage.setItem("playerSkillPoints", player.skillPoints);
+    localStorage.setItem("playerValues", JSON.stringify(player.values));
+    localStorage.setItem(
+      "playerHighestValues",
+      JSON.stringify(player.highestValues)
+    );
+    localStorage.setItem(
+      "playerUnlockedSkills",
+      JSON.stringify(player.unlockedSkills)
+    );
+    localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
   } catch (error) {
     console.error("Failed to save player data:", error);
   }
@@ -69,31 +82,61 @@ function savePlayerData() {
 
 function loadPlayerData() {
   try {
-    const savedData = localStorage.getItem("playerData");
-    if (savedData) {
-      const playerData = JSON.parse(savedData);
+    const version = localStorage.getItem("playerVersion");
+    const rebirths = localStorage.getItem("playerRebirths");
+    const level = localStorage.getItem("playerLevel");
+    const experience = localStorage.getItem("playerExperience");
+    const playerClass = localStorage.getItem("playerClass");
+    const cols = localStorage.getItem("playerCols");
+    const damage = localStorage.getItem("playerDamage");
+    const skillPoints = localStorage.getItem("playerSkillPoints");
+    const values = localStorage.getItem("playerValues");
+    const highestValues = localStorage.getItem("playerHighestValues");
+    const unlockedSkills = localStorage.getItem("playerUnlockedSkills");
+    const inventory = localStorage.getItem("playerInventory");
 
-      if (outdatedVersions.includes(playerData.version)) {
-        console.log(
-          `Wiping outdated save data from version: ${playerData.version}`
-        );
-        localStorage.removeItem("playerData"); // Wipe the data
+    if (version) {
+      if (outdatedVersions.includes(version)) {
+        console.log(`Wiping outdated save data from version: ${version}`);
+        localStorage.removeItem("playerVersion");
+        localStorage.removeItem("playerRebirths");
+        localStorage.removeItem("playerLevel");
+        localStorage.removeItem("playerExperience");
+        localStorage.removeItem("playerClass");
+        localStorage.removeItem("playerCols");
+        localStorage.removeItem("playerDamage");
+        localStorage.removeItem("playerSkillPoints");
+        localStorage.removeItem("playerValues");
+        localStorage.removeItem("playerHighestValues");
+        localStorage.removeItem("playerUnlockedSkills");
+        localStorage.removeItem("playerInventory");
         return; // Return to avoid loading old data
       }
 
-      player = new Player(playerData.version); // Use saved version
-      player.level = playerData.level || player.level;
-      player.experience = playerData.experience || player.experience;
-      player.damage = playerData.damage || player.damage;
-      player.inventory = playerData.inventory || [];
-      player.cols = playerData.cols || player.cols;
-      player.rebirths = playerData.rebirths || player.rebirths;
-      player.values = playerData.values || player.values;
+      player = new Player(currentVersion); // Ensure player is initialized with current version
+      player.version = version;
+      player.level = level ? parseInt(level, 10) : player.level;
+      player.experience = experience
+        ? parseInt(experience, 10)
+        : player.experience;
+      player.damage = damage ? parseInt(damage, 10) : player.damage;
+      player.inventory = inventory ? JSON.parse(inventory) : [];
+      player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
+      player.cols = cols ? parseInt(cols, 10) : player.cols;
+      player.values = values ? JSON.parse(values) : [];
+      player.highestValues = highestValues ? JSON.parse(highestValues) : [];
+      player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
+      player.skillPoints = skillPoints
+        ? parseInt(skillPoints, 10)
+        : player.skillPoints;
+      player.class = playerClass || player.class; // Handle class assignment
     }
   } catch (error) {
     console.error("Failed to load player data:", error);
   }
 }
+
+// Continue from here \\
 
 function spawnMonster() {
   const { world: worldIndex, area: areaIndex } = player.values;
@@ -335,6 +378,79 @@ function updateUI() {
   populateAreaOptions();
 }
 
+function selectClass(className) {
+  player.class = className;
+
+  // Ensure the class-selection and skilltree elements exist
+  const classSelectionElement = document.getElementById("chooseClass");
+  const skillTreeElement = document.getElementById("skilltree");
+
+  if (!classSelectionElement || !skillTreeElement) {
+    console.error(
+      "Required elements for class selection or skill tree not found."
+    );
+    return;
+  }
+
+  // Hide class selection and show skill tree
+  classSelectionElement.classList.add("hidden");
+  skillTreeElement.classList.remove("hidden");
+
+  // Generate the skill tree based on the selected class
+  generateSkillTree();
+}
+
+function generateSkillTree() {
+  if (!player.class) return; // Ensure a class is selected
+
+  skillTreeContainer.innerHTML = ""; // Clear existing skills
+
+  const skillsForClass = skills[player.class];
+
+  Object.keys(skillsForClass).forEach((subClass) => {
+    const classContainer = document.createElement("div");
+    classContainer.classList.add("skill-class-container");
+
+    const classTitle = document.createElement("h3");
+    classTitle.textContent =
+      subClass.charAt(0).toUpperCase() + subClass.slice(1);
+    classContainer.appendChild(classTitle);
+
+    Object.values(skillsForClass[subClass]).forEach((skill) => {
+      const skillElement = document.createElement("div");
+      skillElement.classList.add("skill");
+
+      skillElement.innerHTML = `
+        <p><strong>${skill.name}</strong></p>
+        <p>Cost: ${skill.cost} Points</p>
+      `;
+
+      skillElement.addEventListener("click", () => {
+        selectSkill(skill);
+      });
+
+      classContainer.appendChild(skillElement);
+    });
+
+    skillTreeContainer.appendChild(classContainer);
+  });
+}
+
+function selectSkill(skill) {
+  selectedSkill = skill;
+  skillDescriptionElement.textContent = skill.description;
+}
+
+unlockSkillButton.addEventListener("click", () => {
+  if (selectedSkill && selectedSkill.canUnlock(player)) {
+    selectedSkill.applyEffect(player);
+    player.skillPoints -= selectedSkill.cost;
+    updateUI();
+  } else {
+    alert("Not enough skill points or prerequisites not met.");
+  }
+});
+
 function populateWorldOptions() {
   worldSelect.innerHTML = ""; // Clear existing options
   Object.keys(worlds).forEach((worldKey) => {
@@ -443,6 +559,24 @@ function setupEventListeners() {
     } else {
       alert("Invalid world or area selection. Please choose again.");
     }
+  });
+
+  // New class selection listeners
+  document.getElementById("select-warrior").addEventListener("click", () => {
+    player.class = "warrior";
+    selectClass("warrior");
+  });
+
+  document.getElementById("select-mage").addEventListener("click", () => {
+    player.class = "mage";
+    document.getElementById("chooseClass").classList.add("hidden");
+    generateSkillTree();
+  });
+
+  document.getElementById("select-archer").addEventListener("click", () => {
+    player.class = "archer";
+    document.getElementById("chooseClass").classList.add("hidden");
+    generateSkillTree();
   });
 }
 
