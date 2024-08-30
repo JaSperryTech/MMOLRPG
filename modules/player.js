@@ -21,6 +21,7 @@ export default class Player {
       area: 0,
       world: 0,
     };
+    this.achievements = [];
   }
 
   gainExperience(amount) {

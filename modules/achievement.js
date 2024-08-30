@@ -9,12 +9,25 @@ export default class Achievements {
   }
 
   checkAchievements() {
-    Object.keys(this.achievements).forEach((key) => {
-      const achievement = this.achievements[key];
-      if (!achievement.unlocked && achievement.condition()) {
-        achievement.unlocked = true;
-        // Handle achievement unlocked (e.g., notify the player)
+    Object.entries(this.achievements).forEach(([key, achievement]) => {
+      // Skip already unlocked achievements
+      if (achievement.unlocked) return;
+
+      // Check if condition is a function and evaluate it
+      if (typeof achievement.condition === "function") {
+        if (achievement.condition(this.player)) {
+          achievement.unlocked = true;
+          this.notifyAchievementUnlocked(key); // Notify when unlocked
+        }
+      } else {
+        console.error("Achievement condition is not a function:", achievement);
       }
     });
+  }
+
+  notifyAchievementUnlocked(achievementKey) {
+    // Notify the player (you can customize this as needed)
+    alert(`Achievement Unlocked: ${achievementKey}`);
+    // You might also update the achievements UI
   }
 }

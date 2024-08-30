@@ -55,9 +55,8 @@ function startGame() {
   populateWorldOptions();
   populateAreaOptions();
   updateMonster();
-
-  updateUI();
   setupEventListeners();
+  updateUI();
 }
 
 function savePlayerData() {
@@ -75,6 +74,20 @@ function savePlayerData() {
       "playerHighestValues",
       JSON.stringify(player.highestValues)
     );
+
+    // Filter out unlocked achievements
+    const unlockedAchievements = Object.entries(achievements.achievements)
+      .filter(([key, achievement]) => achievement.unlocked)
+      .reduce((acc, [key, achievement]) => {
+        acc[key] = achievement;
+        return acc;
+      }, {});
+
+    localStorage.setItem(
+      "playerAchievements",
+      JSON.stringify(unlockedAchievements)
+    );
+
     localStorage.setItem(
       "playerUnlockedSkills",
       JSON.stringify(player.unlockedSkills)
@@ -97,6 +110,7 @@ function loadPlayerData() {
     const skillPoints = localStorage.getItem("playerSkillPoints");
     const values = localStorage.getItem("playerValues");
     const highestValues = localStorage.getItem("playerHighestValues");
+    const achievementsData = localStorage.getItem("playerAchievements");
     const unlockedSkills = localStorage.getItem("playerUnlockedSkills");
     const inventory = localStorage.getItem("playerInventory");
 
@@ -130,6 +144,13 @@ function loadPlayerData() {
       player.cols = cols ? parseInt(cols, 10) : player.cols;
       player.values = values ? JSON.parse(values) : [];
       player.highestValues = highestValues ? JSON.parse(highestValues) : [];
+
+      if (achievementsData) {
+        achievements.achievements = JSON.parse(achievementsData);
+      } else {
+        player.achievements = player.achievements
+      }
+
       player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
       player.skillPoints = skillPoints
         ? parseInt(skillPoints, 10)
@@ -155,6 +176,7 @@ function updateUI() {
   updatePlayerStatsUI();
   updateMonsterUI();
   updateInventoryDisplay(player);
+  achievements.checkAchievements();
   updateAchievementsList();
   updateWorldAndAreaSelection();
 }
@@ -540,7 +562,12 @@ function selectClass(className) {
 }
 
 function generateSkillTree() {
-  if (!player.class) return; // Ensure a class is selected
+  if (!player.class || !skills[player.class]) {
+    console.log("Invalid class or skills data.");
+    console.log("Player class:", player.class);
+    console.log("Skills data for class:", skills[player.class]);
+    return; // Exit if no valid class or skills data
+  }
 
   skillTreeContainer.innerHTML = ""; // Clear existing skills
 
