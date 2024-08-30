@@ -24,6 +24,11 @@ export default class Player {
     this.achievements = [];
   }
 
+  updateDamage() {
+    this.damage = this.applyRebirthBonuses;
+    return totalDamage;
+  }
+
   gainExperience(amount) {
     this.experience += amount;
 
@@ -89,8 +94,13 @@ export default class Player {
   }
 
   applyRebirthBonuses() {
-    // Example bonus: Increase base damage by 10% per rebirth
-    this.damage += Math.floor(this.damage * 0.01 * this.rebirths);
+    // Multiplicative bonus
+    const damageMultiplier = 1 + 0.01 * this.rebirths;
+    this.damage = Math.floor(this.damage * damageMultiplier);
+
+    // Additive bonus
+    const additiveBonus = 5 * this.rebirths;
+    this.damage += additiveBonus;
   }
 
   updateValues({ round, area, world }) {

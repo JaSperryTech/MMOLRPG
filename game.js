@@ -8,6 +8,7 @@ import Loot from "./modules/loot.js";
 import Achievements from "./modules/achievement.js";
 import { skills } from "./modules/skills.js";
 import { worlds } from "./modules/world.js";
+import * as commands from "./modules/commands.js";
 
 let player = new Player(currentVersion);
 let achievements = new Achievements(player);
@@ -148,7 +149,7 @@ function loadPlayerData() {
       if (achievementsData) {
         achievements.achievements = JSON.parse(achievementsData);
       } else {
-        player.achievements = player.achievements
+        player.achievements = player.achievements;
       }
 
       player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
@@ -606,3 +607,5 @@ function selectSkill(skill) {
   selectedSkill = skill;
   skillDescriptionElement.textContent = skill.description;
 }
+
+setInterval(commands.checkCommands, 100); // Check every 100ms
