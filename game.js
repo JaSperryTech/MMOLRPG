@@ -135,6 +135,15 @@ function loadPlayerData() {
         ? parseInt(skillPoints, 10)
         : player.skillPoints;
       player.class = playerClass || player.class; // Handle class assignment
+
+      if (player.class !== null) {
+        const skillTreeElement = document.getElementById("skilltreeContainer");
+        skillTreeElement.classList.remove("hidden");
+        generateSkillTree();
+      } else {
+        const classSelectionElement = document.getElementById("chooseClass");
+        classSelectionElement.classList.remove("hidden");
+      }
     }
   } catch (error) {
     console.error("Failed to load player data:", error);
@@ -513,7 +522,7 @@ function selectClass(className) {
 
   // Ensure the class-selection and skilltree elements exist
   const classSelectionElement = document.getElementById("chooseClass");
-  const skillTreeElement = document.getElementById("skilltree");
+  const skillTreeElement = document.getElementById("skilltreeContainer");
 
   if (!classSelectionElement || !skillTreeElement) {
     console.error(
@@ -570,8 +579,3 @@ function selectSkill(skill) {
   selectedSkill = skill;
   skillDescriptionElement.textContent = skill.description;
 }
-
-document.getElementById("sidebar-toggle").addEventListener("click", () => {
-  const sidebar = document.getElementById("sidebar");
-  sidebar.classList.toggle("open");
-});
