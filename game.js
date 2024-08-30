@@ -570,3 +570,8 @@ function selectSkill(skill) {
   selectedSkill = skill;
   skillDescriptionElement.textContent = skill.description;
 }
+
+document.getElementById("sidebar-toggle").addEventListener("click", () => {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("open");
+});
