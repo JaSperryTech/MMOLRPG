@@ -158,7 +158,7 @@ function loadPlayerData() {
         : player.skillPoints;
       player.class = playerClass || player.class; // Handle class assignment
 
-      if (player.class !== null) {
+      if (player.class == playerClass) {
         const skillTreeElement = document.getElementById("skilltreeContainer");
         skillTreeElement.classList.remove("hidden");
         generateSkillTree();
