@@ -1,33 +1,80 @@
-// modules/Achievements.js
+// In Achievements.js
 export default class Achievements {
   constructor(player) {
     this.player = player;
     this.achievements = {
-      firstLevel: { unlocked: false, condition: () => this.player.level >= 2 },
-      rich: { unlocked: false, condition: () => this.player.cols >= 1000 },
+      firstKill: {
+        name: "First Kill",
+        description: "Defeat your first monster.",
+        unlocked: false,
+      },
+      firstRebirth: {
+        name: "First Rebirth",
+        description: "Rebirth for the first time.",
+        unlocked: false,
+      },
+      // Add more achievements as necessary
     };
   }
 
-  checkAchievements() {
-    Object.entries(this.achievements).forEach(([key, achievement]) => {
-      // Skip already unlocked achievements
-      if (achievement.unlocked) return;
-
-      // Check if condition is a function and evaluate it
-      if (typeof achievement.condition === "function") {
-        if (achievement.condition(this.player)) {
-          achievement.unlocked = true;
-          this.notifyAchievementUnlocked(key); // Notify when unlocked
-        }
-      } else {
-        console.error("Achievement condition is not a function:", achievement);
-      }
-    });
+  getDefaultAchievements() {
+    return {
+      firstKill: {
+        name: "First Kill",
+        description: "Defeat your first monster.",
+        unlocked: false,
+      },
+      firstRebirth: {
+        name: "First Rebirth",
+        description: "Rebirth for the first time.",
+        unlocked: false,
+      },
+      // Add more default achievements as necessary
+    };
   }
 
-  notifyAchievementUnlocked(achievementKey) {
-    // Notify the player (you can customize this as needed)
-    alert(`Achievement Unlocked: ${achievementKey}`);
-    // You might also update the achievements UI
+  checkAchievements(player) {
+    console.log("Checking achievements...");
+
+    if (!this.achievements || Object.keys(this.achievements).length === 0) {
+      console.error("Achievements object is empty or undefined.");
+      return;
+    }
+
+    if (!player) {
+      console.error("Player object is undefined.");
+      return;
+    }
+
+    if (!player.values) {
+      console.error("Player values object is undefined.");
+      return;
+    }
+
+    Object.keys(this.achievements).forEach((key) => {
+      const achievement = this.achievements[key];
+
+      if (!achievement.unlocked) {
+        console.log(
+          `Checking if achievement '${achievement.name}' can be unlocked...`
+        );
+
+        // Log player values for debugging
+        console.log(`Player round: ${player.values.round}`);
+        console.log(`Player rebirths: ${player.rebirths}`);
+
+        if (key === "firstKill" && player.values.round > 0) {
+          achievement.unlocked = true;
+          console.log(`Achievement '${achievement.name}' unlocked!`);
+        }
+
+        if (key === "firstRebirth" && player.rebirths > 0) {
+          achievement.unlocked = true;
+          console.log(`Achievement '${achievement.name}' unlocked!`);
+        }
+      } else {
+        console.log(`Achievement '${achievement.name}' is already unlocked.`);
+      }
+    });
   }
 }

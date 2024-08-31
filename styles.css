@@ -500,3 +500,21 @@ section h2 {
 #unlock-skill-button:hover {
   background-color: #218838;
 }
+
+.achievement-box {
+  border: 2px solid #ccc;
+  background-color: #f9f9f9;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.achievement-box p {
+  margin: 5px 0;
+}
+
+.achievement-box:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  border-color: #ffa500; /* Change border color on hover */
+}

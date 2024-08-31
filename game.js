@@ -44,7 +44,7 @@ const attackButton = document.getElementById("attack-button");
 const skillTreeContainer = document.getElementById("skill-tree-container");
 const skillDescriptionElement = document.getElementById("skill-description");
 const unlockedSkillButton = document.getElementById("unlock-skill-button");
-const achievementsListElement = document.getElementById("achievements-list");
+const achievementsListElement = document.getElementById("achievements-grid");
 
 // Start the game
 startGame();
@@ -99,6 +99,16 @@ function savePlayerData() {
   }
 }
 
+function initializeAchievements() {
+  const defaultAchievements = achievements.getDefaultAchievements();
+
+  Object.keys(defaultAchievements).forEach((key) => {
+    if (!achievements.achievements[key]) {
+      achievements.achievements[key] = defaultAchievements[key];
+    }
+  });
+}
+
 function loadPlayerData() {
   try {
     const version = localStorage.getItem("playerVersion");
@@ -140,9 +150,14 @@ function loadPlayerData() {
     player.highestValues = highestValues ? JSON.parse(highestValues) : [];
 
     if (achievementsData) {
-      achievements.achievements = JSON.parse(achievementsData);
+      const parsedAchievements = JSON.parse(achievementsData);
+      if (Object.keys(parsedAchievements).length > 0) {
+        achievements.achievements = parsedAchievements;
+      } else {
+        initializeAchievements();
+      }
     } else {
-      player.achievements = player.achievements;
+      initializeAchievements();
     }
 
     player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
@@ -175,7 +190,7 @@ function updateUI() {
   updatePlayerStatsUI();
   updateMonsterUI();
   updateInventoryDisplay(player);
-  achievements.checkAchievements();
+  achievements.checkAchievements(player);
   updateAchievementsList();
   updateWorldAndAreaSelection();
 }
@@ -220,11 +235,36 @@ function renderInventory(items) {
 }
 
 function updateAchievementsList() {
+  console.log("Updating achievements list...");
+  achievementsListElement.innerHTML = ""; // Clear previous list
+
   const unlockedAchievements = Object.keys(achievements.achievements).filter(
     (key) => achievements.achievements[key].unlocked
   );
-  achievementsListElement.textContent =
-    unlockedAchievements.length > 0 ? unlockedAchievements.join(", ") : "None";
+
+  if (unlockedAchievements.length > 0) {
+    unlockedAchievements.forEach((achievementKey) => {
+      const achievement = achievements.achievements[achievementKey];
+
+      // Create a new div for each unlocked achievement
+      const achievementElement = document.createElement("div");
+      achievementElement.classList.add("achievement-box");
+
+      // Add the achievement name and description to the div
+      achievementElement.innerHTML = `
+        <p><strong>${achievement.name}</strong></p>
+        <p>${achievement.description}</p>
+      `;
+
+      // Append the achievement div to the achievements list element
+      achievementsListElement.appendChild(achievementElement);
+
+      console.log(`Achievement '${achievement.name}' displayed in the list.`);
+    });
+  } else {
+    console.log("No achievements unlocked.");
+    achievementsListElement.textContent = "No achievements unlocked.";
+  }
 }
 
 function updateWorldAndAreaSelection() {

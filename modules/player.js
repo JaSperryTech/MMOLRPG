@@ -12,7 +12,7 @@ export default class Player {
     this.inventory = [];
     this.unlockedSkills = [];
     this.values = {
-      round: 1,
+      round: 0,
       area: 1,
       world: 1,
     };
