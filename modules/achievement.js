@@ -1,20 +1,8 @@
-// In Achievements.js
 export default class Achievements {
   constructor(player) {
     this.player = player;
-    this.achievements = {
-      firstKill: {
-        name: "First Kill",
-        description: "Defeat your first monster.",
-        unlocked: false,
-      },
-      firstRebirth: {
-        name: "First Rebirth",
-        description: "Rebirth for the first time.",
-        unlocked: false,
-      },
-      // Add more achievements as necessary
-    };
+    this.achievements =
+      this.loadAchievements() || this.getDefaultAchievements();
   }
 
   getDefaultAchievements() {
@@ -31,6 +19,18 @@ export default class Achievements {
       },
       // Add more default achievements as necessary
     };
+  }
+
+  loadAchievements() {
+    try {
+      const savedAchievements = localStorage.getItem("playerAchievements");
+      if (savedAchievements) {
+        return JSON.parse(savedAchievements);
+      }
+    } catch (error) {
+      console.error("Failed to load achievements:", error);
+    }
+    return null;
   }
 
   checkAchievements(player) {
@@ -59,10 +59,6 @@ export default class Achievements {
           `Checking if achievement '${achievement.name}' can be unlocked...`
         );
 
-        // Log player values for debugging
-        console.log(`Player round: ${player.values.round}`);
-        console.log(`Player rebirths: ${player.rebirths}`);
-
         if (key === "firstKill" && player.values.round > 0) {
           achievement.unlocked = true;
           console.log(`Achievement '${achievement.name}' unlocked!`);
@@ -76,5 +72,19 @@ export default class Achievements {
         console.log(`Achievement '${achievement.name}' is already unlocked.`);
       }
     });
+
+    // Save the updated achievements data
+    this.saveAchievements();
+  }
+
+  saveAchievements() {
+    try {
+      localStorage.setItem(
+        "playerAchievements",
+        JSON.stringify(this.achievements)
+      );
+    } catch (error) {
+      console.error("Failed to save achievements:", error);
+    }
   }
 }
