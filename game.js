@@ -115,57 +115,55 @@ function loadPlayerData() {
     const unlockedSkills = localStorage.getItem("playerUnlockedSkills");
     const inventory = localStorage.getItem("playerInventory");
 
-    if (version) {
-      if (outdatedVersions.includes(version)) {
-        console.log(`Wiping outdated save data from version: ${version}`);
-        localStorage.removeItem("playerVersion");
-        localStorage.removeItem("playerRebirths");
-        localStorage.removeItem("playerLevel");
-        localStorage.removeItem("playerExperience");
-        localStorage.removeItem("playerClass");
-        localStorage.removeItem("playerCols");
-        localStorage.removeItem("playerDamage");
-        localStorage.removeItem("playerSkillPoints");
-        localStorage.removeItem("playerValues");
-        localStorage.removeItem("playerHighestValues");
-        localStorage.removeItem("playerUnlockedSkills");
-        localStorage.removeItem("playerInventory");
-        return; // Return to avoid loading old data
-      }
+    if (!version) {
+      localStorage.clear();
+      savePlayerData();
+    }
 
-      player = new Player(currentVersion); // Ensure player is initialized with current version
-      player.version = version;
-      player.level = level ? parseInt(level, 10) : player.level;
-      player.experience = experience
-        ? parseInt(experience, 10)
-        : player.experience;
-      player.damage = damage ? parseInt(damage, 10) : player.damage;
-      player.inventory = inventory ? JSON.parse(inventory) : [];
-      player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
-      player.cols = cols ? parseInt(cols, 10) : player.cols;
-      player.values = values ? JSON.parse(values) : [];
-      player.highestValues = highestValues ? JSON.parse(highestValues) : [];
+    if (outdatedVersions.includes(version)) {
+      console.log(`Wiping outdated save data from version: ${version}`);
+      localStorage.clear();
+      savePlayerData();
+    }
 
-      if (achievementsData) {
-        achievements.achievements = JSON.parse(achievementsData);
-      } else {
-        player.achievements = player.achievements;
-      }
+    player = new Player(currentVersion); // Ensure player is initialized with current version
+    player.version = version;
+    player.level = level ? parseInt(level, 10) : player.level;
+    player.experience = experience
+      ? parseInt(experience, 10)
+      : player.experience;
+    player.damage = damage ? parseInt(damage, 10) : player.damage;
+    player.inventory = inventory ? JSON.parse(inventory) : [];
+    player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
+    player.cols = cols ? parseInt(cols, 10) : player.cols;
+    player.values = values ? JSON.parse(values) : [];
+    player.highestValues = highestValues ? JSON.parse(highestValues) : [];
 
-      player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
-      player.skillPoints = skillPoints
-        ? parseInt(skillPoints, 10)
-        : player.skillPoints;
-      player.class = playerClass || player.class; // Handle class assignment
+    if (achievementsData) {
+      achievements.achievements = JSON.parse(achievementsData);
+    } else {
+      player.achievements = player.achievements;
+    }
 
-      if (player.class == playerClass) {
-        const skillTreeElement = document.getElementById("skilltreeContainer");
-        skillTreeElement.classList.remove("hidden");
-        generateSkillTree();
-      } else {
-        const classSelectionElement = document.getElementById("chooseClass");
-        classSelectionElement.classList.remove("hidden");
-      }
+    player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
+    player.skillPoints = skillPoints
+      ? parseInt(skillPoints, 10)
+      : player.skillPoints;
+    player.class = playerClass || player.class; // Handle class assignment
+
+    // Explicitly check if player.class is null or doesn't match playerClass
+    if (player.class === "null" && playerClass === "null") {
+      // Display class selection screen
+      const classSelectionElement = document.getElementById("chooseClass");
+      classSelectionElement.classList.remove("hidden");
+    } else if (player.class === playerClass) {
+      const skillTreeElement = document.getElementById("skilltreeContainer");
+      skillTreeElement.classList.remove("hidden");
+
+      generateSkillTree();
+    } else {
+      const classSelectionElement = document.getElementById("chooseClass");
+      classSelectionElement.classList.remove("hidden");
     }
   } catch (error) {
     console.error("Failed to load player data:", error);
@@ -321,44 +319,34 @@ function handleInvalidWorldOrArea() {
 
 function getMonsterLevel() {
   const { round, area, world } = player.values;
+
+  // Calculate base level based on round
   const minBaseLevel = round > 0 ? Math.floor(round) : 1;
   const maxBaseLevel = round > 0 ? Math.floor(round * 2) : 1;
+
+  // Generate a skewed random value to favor lower levels
   const randomValue = Math.random();
-  const skew = 11;
-  const weightedRandom = Math.pow(randomValue, skew);
+  const skewFactor = 2;
+  const skewedRandomValue = Math.pow(randomValue, skewFactor);
+
+  // Calculate the base level using the skewed random value
   const baseLevel =
-    Math.floor(weightedRandom * (maxBaseLevel - minBaseLevel + 1)) +
+    Math.floor(skewedRandomValue * (maxBaseLevel - minBaseLevel + 1)) +
     minBaseLevel;
 
-  const minAreaBonus = area > 1 ? Math.floor((area - 1) * 10) : 0;
-  const maxAreaBonus = area > 1 ? minAreaBonus + 10 : 0;
+  // Calculate area and world bonuses
   const areaBonus =
-    area > 1
-      ? Math.floor(
-          Math.pow(Math.random(), skew) * (maxAreaBonus - minAreaBonus + 1)
-        ) + minAreaBonus
-      : 0;
-
-  const minWorldBonus = world > 1 ? Math.floor((world - 1) * 100) : 0;
-  const maxWorldBonus = world > 1 ? minWorldBonus + 100 : 0;
+    area > 1 ? Math.floor((area - 1) * 10 + Math.random() * 10) : 0;
   const worldBonus =
-    world > 1
-      ? Math.floor(
-          Math.pow(Math.random(), skew) * (maxWorldBonus - minWorldBonus + 1)
-        ) + minWorldBonus
-      : 0;
+    world > 1 ? Math.floor((world - 1) * 100 + Math.random() * 100) : 0;
 
-  const level = Math.min(
-    baseLevel + areaBonus + worldBonus,
-    maxBaseLevel +
-      (area > 1 ? maxAreaBonus : 0) +
-      (world > 1 ? maxWorldBonus : 0)
+  // Apply difficulty modifier based on player power
+  const difficultyModifier = Math.log1p(player.damage) / 10;
+
+  // Calculate final level
+  const level = Math.round(
+    baseLevel + areaBonus + worldBonus + difficultyModifier
   );
-
-  console.log(`Monster Level BaseLevel:`, baseLevel);
-  console.log(`Monster Level areaBonus:`, areaBonus);
-  console.log(`Monster Level worldBonus:`, worldBonus);
-  console.log(`Monster Level Calculated:`, level);
 
   return level;
 }

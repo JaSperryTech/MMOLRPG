@@ -38,7 +38,7 @@ export default class Player {
   }
 
   getExperienceToNextLevel() {
-    let BaseEXP = Math.round((5000 + (10 * this.level) ** 2) / 10);
+    let BaseEXP = 5 * this.level ** 2 + 10 * this.level + 100;
 
     let need =
       this.rebirths !== 0

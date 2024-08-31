@@ -24,7 +24,7 @@ export default class Monster {
   calculateExperience(level) {
     // Health scales with level
     const monsterData = monsters[this.name];
-    return Math.round(10 + (monsterData.experience * level) ** 2 / 10);
+    return 3 * level ** 2 + 5 * level + monsterData.experience;
   }
 
   takeDamage(amount) {
