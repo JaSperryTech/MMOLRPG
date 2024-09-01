@@ -12,6 +12,8 @@ import * as commands from "./modules/commands.js";
 
 let player = new Player(currentVersion);
 let achievements = new Achievements(player);
+let playerSkills = skills;
+
 let currentMonster = null;
 let selectedSkill = null;
 
@@ -89,10 +91,8 @@ function savePlayerData() {
       JSON.stringify(unlockedAchievements)
     );
 
-    localStorage.setItem(
-      "playerUnlockedSkills",
-      JSON.stringify(player.unlockedSkills)
-    );
+    localStorage.setItem("playerSkills", JSON.stringify(playerSkills));
+
     localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
   } catch (error) {
     console.error("Failed to save player data:", error);
@@ -109,6 +109,16 @@ function initializeAchievements() {
   });
 }
 
+// Initialize skills properly
+function initializeSkills() {
+  try {
+    playerSkills = JSON.parse(JSON.stringify(skills)); // Ensure cloning is done correctly
+    console.log(playerSkills);
+  } catch (error) {
+    console.error("Failed to clone skills:", error);
+  }
+}
+
 function loadPlayerData() {
   try {
     const version = localStorage.getItem("playerVersion");
@@ -122,7 +132,7 @@ function loadPlayerData() {
     const values = localStorage.getItem("playerValues");
     const highestValues = localStorage.getItem("playerHighestValues");
     const achievementsData = localStorage.getItem("playerAchievements");
-    const unlockedSkills = localStorage.getItem("playerUnlockedSkills");
+    const unlockedSkills = localStorage.getItem("playerSkills");
     const inventory = localStorage.getItem("playerInventory");
 
     if (!version) {
@@ -160,7 +170,12 @@ function loadPlayerData() {
       initializeAchievements();
     }
 
-    player.unlockedSkills = unlockedSkills ? JSON.parse(unlockedSkills) : [];
+    if (unlockedSkills) {
+      playerSkills = JSON.parse(unlockedSkills);
+    } else {
+      initializeSkills();
+    }
+
     player.skillPoints = skillPoints
       ? parseInt(skillPoints, 10)
       : player.skillPoints;
@@ -439,11 +454,35 @@ function setupEventListeners() {
     selectClass("archer");
   });
 
+  // Event listener for unlocking a skill
   unlockedSkillButton.addEventListener("click", () => {
-    if (selectedSkill && selectedSkill.canUnlock(player)) {
-      selectedSkill.applyEffect(player);
+    if (
+      selectedSkill &&
+      canUnlock(
+        player,
+        player.class,
+        selectedSkill.subClass,
+        selectedSkill.name
+      )
+    ) {
+      console.log(
+        `Attempting to apply effect for skill: ${selectedSkill.name} in ${player.class} - ${selectedSkill.subClass}`
+      );
+
+      // Apply the skill's effect using the correct subClass and skillName
+      applyEffect(
+        player,
+        player.class,
+        selectedSkill.subClass,
+        selectedSkill.name
+      );
+
+      // Deduct skill points
       player.skillPoints -= selectedSkill.cost;
+
+      // Update UI and save player data
       updateUI();
+      savePlayerData();
     } else {
       alert("Not enough skill points or prerequisites not met.");
     }
@@ -590,38 +629,54 @@ function selectClass(className) {
   generateSkillTree();
 }
 
+// Function to generate the skill tree UI
 function generateSkillTree() {
-  if (!player.class || !skills[player.class]) {
+  if (!player.class || !playerSkills[player.class]) {
     console.log("Invalid class or skills data.");
-    console.log("Player class:", player.class);
-    console.log("Skills data for class:", skills[player.class]);
-    return; // Exit if no valid class or skills data
+    return;
   }
 
-  skillTreeContainer.innerHTML = ""; // Clear existing skills
+  // Clear existing skill tree container
+  skillTreeContainer.innerHTML = "";
 
-  const skillsForClass = skills[player.class];
+  const skillsForClass = playerSkills[player.class];
 
+  // Iterate through each subclass and skill
   Object.keys(skillsForClass).forEach((subClass) => {
     const classContainer = document.createElement("div");
     classContainer.classList.add("skill-class-container");
 
+    // Create a title for each subclass
     const classTitle = document.createElement("h3");
     classTitle.textContent =
       subClass.charAt(0).toUpperCase() + subClass.slice(1);
     classContainer.appendChild(classTitle);
 
-    Object.values(skillsForClass[subClass]).forEach((skill) => {
+    // Iterate through each skill in the subclass
+    Object.entries(skillsForClass[subClass]).forEach(([skillName, skill]) => {
       const skillElement = document.createElement("div");
       skillElement.classList.add("skill");
 
       skillElement.innerHTML = `
         <p><strong>${skill.name}</strong></p>
         <p>Cost: ${skill.cost} Points</p>
+        <p>Status: ${skill.unlocked ? "Unlocked" : "Locked"}</p>
       `;
 
+      // Event listener for selecting a skill
       skillElement.addEventListener("click", () => {
-        selectSkill(skill);
+        selectedSkill = { ...skill, subClass, name: skillName }; // Explicitly set subClass and name
+
+        // Update skill description
+        skillDescriptionElement.textContent = skill.description;
+
+        // Update the state of the unlock button based on whether the skill can be unlocked
+        unlockedSkillButton.disabled = !canUnlock(
+          player,
+          player.class,
+          subClass,
+          skillName
+        );
       });
 
       classContainer.appendChild(skillElement);
@@ -631,9 +686,41 @@ function generateSkillTree() {
   });
 }
 
-function selectSkill(skill) {
-  selectedSkill = skill;
-  skillDescriptionElement.textContent = skill.description;
+function canUnlock(player, classType, specialization, upgradeName) {
+  console.log(
+    `Attempting to unlock skill: ${upgradeName} in ${classType} - ${specialization}`
+  );
+
+  const upgrade = playerSkills[classType]?.[specialization]?.[upgradeName];
+  if (!upgrade) {
+    console.error(
+      `Upgrade ${upgradeName} not found in ${classType} ${specialization}`
+    );
+    return false;
+  }
+
+  // Check if the player has enough skill points and the skill isn't already unlocked
+  return player.skillPoints >= upgrade.cost && !upgrade.unlocked;
+}
+
+function applyEffect(player, classType, specialization, upgradeName) {
+  console.log(
+    `Applying effect for skill: ${upgradeName} in ${classType} - ${specialization}`
+  );
+
+  const upgrade = playerSkills[classType]?.[specialization]?.[upgradeName];
+  if (!upgrade) {
+    console.error(
+      `Upgrade ${upgradeName} not found in ${classType} ${specialization}`
+    );
+    return;
+  }
+
+  // Apply the effect and mark the upgrade as unlocked
+  if (typeof upgrade.effect === "function") {
+    upgrade.effect(player);
+  }
+  upgrade.unlocked = true;
 }
 
 setInterval(commands.checkCommands, 100); // Check every 100ms

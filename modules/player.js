@@ -8,7 +8,7 @@ export default class Player {
     this.cols = 0;
     this.damage = 1;
     this.rebirths = 0;
-    this.skillPoints = 0;
+    this.skillPoints = 2;
     this.inventory = [];
     this.unlockedSkills = [];
     this.values = {
@@ -18,8 +18,8 @@ export default class Player {
     };
     this.highestValues = {
       round: 0,
-      area: 0,
-      world: 0,
+      area: 1,
+      world: 1,
     };
     this.achievements = [];
   }

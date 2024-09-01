@@ -4,20 +4,18 @@ export default class Upgrade {
     this.name = name;
     this.description = description;
     this.cost = cost;
-    this.effect = effect; // A function or value that represents the effect of the upgrade
+    this.effect = effect; // Function or value that represents the effect of the upgrade
+    this.unlocked = false;
   }
 
-  // Check if the upgrade can be unlocked based on player's skill points
   canUnlock(player) {
-    return player.skillPoints >= this.cost;
+    return player.skillPoints >= this.cost && !this.unlocked;
   }
 
-  // Apply the upgrade effect to the player
   applyEffect(player) {
-    if (typeof this.effect === "function") {
+    if (this.effect && typeof this.effect === "function") {
       this.effect(player);
-    } else {
-      console.error(`Effect for upgrade ${this.name} is not a function.`);
+      this.unlocked = true;
     }
   }
 }
@@ -25,7 +23,7 @@ export default class Upgrade {
 // Define upgrades for each class
 
 // Warrior Upgrades
-export const warriorUpgrades = {
+let warriorUpgrades = {
   Berserker: {
     Fury: new Upgrade(
       "Fury",
@@ -71,7 +69,7 @@ export const warriorUpgrades = {
 };
 
 // Mage Upgrades
-export const mageUpgrades = {
+let mageUpgrades = {
   Elementalist: {
     ElementalSurge: new Upgrade(
       "Elemental Surge",
@@ -121,7 +119,7 @@ export const mageUpgrades = {
 };
 
 // Archer Upgrades
-export const archerUpgrades = {
+let archerUpgrades = {
   Ranger: {
     RapidFire: new Upgrade(
       "Rapid Fire",
