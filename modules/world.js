@@ -93,7 +93,7 @@ export const worlds = {
       7: { monsters: ["Slime"] },
       8: { monsters: ["Slime"] },
       9: { monsters: ["Slime"] },
-      10: { monsters: ["King_Slime"] },
+      10: { monsters: ["Slime", "Goblin", "King_Slime"] },
       11: { monsters: ["Slime", "Goblin"] },
       12: { monsters: ["Slime", "Goblin"] },
       13: { monsters: ["Slime", "Goblin"] },

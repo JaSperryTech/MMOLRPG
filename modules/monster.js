@@ -8,6 +8,7 @@ export default class Monster {
     const monsterData = monsters[name];
     this.baseHealth = monsterData.stats.HP;
     this.baseDefense = monsterData.stats.Defense;
+    this.isBoss = monsterData.type === "Boss"; // Identify if the monster is a boss
     this.health = this.calculateHealth(level);
     this.maxhealth = this.health; // Initialize health using calculateHealth
     this.colsDrop = Math.floor(Math.random() * level * 10);
@@ -16,13 +17,21 @@ export default class Monster {
   }
 
   calculateHealth(level) {
-    // Health scales with level
+    if (this.isBoss) {
+      // Bosses have a more controlled scaling factor
+      return Math.round(10 + (this.baseHealth * level) ** 2 / 5000);
+    }
+    // Regular monsters scale with level
     return Math.round(10 + (this.baseHealth * level) ** 2 / 100);
   }
 
   calculateExperience(level) {
-    // Health scales with level
     const monsterData = monsters[this.name];
+    if (this.isBoss) {
+      // Bosses give more experience but with less aggressive scaling
+      return monsterData.experience + level * 10; // Example scaling
+    }
+    // Regular monsters scale with level
     return 3 * level ** 2 + 5 * level + monsterData.experience;
   }
 

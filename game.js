@@ -416,7 +416,7 @@ function getMonsterLevel() {
 
   // Calculate final level
   const level = Math.round(
-    baseLevel + areaBonus + worldBonus + difficultyModifier
+    baseLevel + areaBonus + worldBonus // + difficultyModifier
   );
 
   return level;
