@@ -80,12 +80,12 @@ function savePlayerData() {
     );
 
     // Filter out unlocked achievements
-    const unlockedAchievements = Object.entries(achievements.achievements)
-      .filter(([key, achievement]) => achievement.unlocked)
-      .reduce((acc, [key, achievement]) => {
-        acc[key] = achievement;
-        return acc;
-      }, {});
+    const unlockedAchievements = Object.entries(
+      achievements.achievements
+    ).reduce((acc, [key, achievement]) => {
+      acc[key] = achievement;
+      return acc;
+    }, {});
 
     localStorage.setItem(
       "playerAchievements",
