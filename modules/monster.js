@@ -1,5 +1,4 @@
 // modules/Monster.js
-import { items } from "./loot.js";
 import { monsters } from "./world.js"; // Import monsters data
 
 export default class Monster {

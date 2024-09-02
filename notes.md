@@ -5,12 +5,12 @@
 - [x] Review existing skill trees and skills
 - [x] Add new skill trees or skills
 - [x] Update existing skill details
-- [ ] Test changes
+- [x] Test changes
 
 ## 2. Save Skill Tree Function
 
-- [ ] Implement save functionality for skill trees
-- [ ] Test saving and loading of skill trees
+- [x] Implement save functionality for skill trees
+- [x] Test saving and loading of skill trees
 
 ## 3. Fix Default Skill Tree Screen
 
@@ -32,15 +32,15 @@
 
 ## 6. Update Rebirth Screen
 
-- [ ] Assess current Rebirth Screen
-- [ ] Implement necessary updates
-- [ ] Test changes
+- [x] Assess current Rebirth Screen
+- [x] Implement necessary updates
+- [x] Test changes
 
 ## 7. Update Monster Drops
 
-- [ ] Review current monster drop mechanics
-- [ ] Update drop rates and items
-- [ ] Test changes
+- [x] Review current monster drop mechanics
+- [x] Update drop rates and items
+- [x] Test changes
 
 ## 8. Equipment System
 

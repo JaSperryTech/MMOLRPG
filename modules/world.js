@@ -1,4 +1,86 @@
-// modules/world.js
+import { items } from "./loot.js";
+
+// Function to create monster drops with chances
+const createDrops = (dropDefinitions) => {
+  return dropDefinitions
+    .map(({ name, chance }) => {
+      if (items[name]) {
+        return {
+          name: name,
+          chance: chance,
+          baseValue: items[name].baseValue,
+        };
+      }
+      return null;
+    })
+    .filter((drop) => drop !== null);
+};
+
+// Function to create monsters with drops
+const createMonsters = () => {
+  return {
+    Slime: {
+      name: "Slime",
+      type: "Common",
+      stats: {
+        HP: 10,
+        Defense: 10,
+      },
+      experience: 10,
+      drops: createDrops([
+        { name: "SlimeGel", chance: 0.5 },
+        { name: "AcidicResidue", chance: 0.3 },
+        { name: "SlimeCore", chance: 0.2 },
+      ]),
+    },
+    Goblin: {
+      name: "Goblin",
+      type: "Uncommon",
+      stats: {
+        HP: 20,
+        Defense: 15,
+      },
+      experience: 25,
+      drops: createDrops([
+        { name: "GoblinTeeth", chance: 0.5 },
+        { name: "GoblinDagger", chance: 0.25 },
+        { name: "GoblinMask", chance: 0.1 },
+      ]),
+    },
+    King_Slime: {
+      name: "King Slime",
+      type: "Boss",
+      stats: {
+        HP: 100,
+        Defense: 100,
+      },
+      experience: 100,
+      drops: createDrops([
+        { name: "SlimeCrystal", chance: 0.5 },
+        { name: "KingSlimeCrown", chance: 0.25 },
+        { name: "SlimeEssence", chance: 0.1 },
+        { name: "RoyalSlimeArmorPiece", chance: 0.15 },
+      ]),
+    },
+    King_Goblin: {
+      name: "King Goblin",
+      type: "Boss",
+      stats: {
+        HP: 200,
+        Defense: 150,
+      },
+      experience: 250,
+      drops: createDrops([
+        { name: "KingGoblinTeeth", chance: 0.5 },
+        { name: "KingGoblinDagger", chance: 0.25 },
+        { name: "KingGoblinCrown", chance: 0.15 },
+        { name: "GoblinKingStaff", chance: 0.1 },
+      ]),
+    },
+  };
+};
+
+// Export the worlds and monsters
 export const worlds = {
   World1: {
     Areas: {
@@ -26,52 +108,4 @@ export const worlds = {
   },
 };
 
-export const monsters = {
-  Slime: {
-    name: "Slime",
-    type: "Common",
-    stats: {
-      HP: 10,
-      Defense: 10,
-    },
-    experience: 10,
-    drops: [{ name: "Potion", chance: 0.5 }],
-  },
-  Goblin: {
-    name: "Goblin",
-    type: "Uncommon",
-    stats: {
-      HP: 20,
-      Defense: 15,
-    },
-    experience: 25,
-    drops: [
-      { name: "Sword", chance: 0.25 },
-      { name: "Shield", chance: 0.25 },
-    ],
-  },
-  King_Slime: {
-    name: "King Slime",
-    type: "Common",
-    stats: {
-      HP: 100,
-      Defense: 100,
-    },
-    experience: 100,
-    drops: [{ name: "Potion", chance: 1 }],
-  },
-  King_Goblin: {
-    name: "King Goblin",
-    type: "Uncommon",
-    stats: {
-      HP: 200,
-      Defense: 150,
-    },
-    experience: 250,
-    drops: [
-      { name: "Sword", chance: 0.5 },
-      { name: "Shield", chance: 0.5 },
-    ],
-  },
-  // Define more monsters as needed
-};
+export const monsters = createMonsters();
