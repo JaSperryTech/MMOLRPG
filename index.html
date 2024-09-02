@@ -55,7 +55,6 @@
                   <p id="level-label">LV: <span id="monster-level">1</span></p>
                 </div>
               </div>
-              <p>Player Rebirths: <span id="player-rebirths">0</span></p>
               <p>Cols: <span id="player-cols">0</span></p>
               <p>Player Level: <span id="player-level">1</span></p>
               <p>
@@ -80,7 +79,12 @@
             <button id="select-archer">Archer</button>
           </div>
           <div id="skilltreeContainer" class="hidden">
-            <h2>Skill Tree</h2>
+            <div class="header-container">
+              <h2>Skill Tree</h2>
+              <h2 id="skillPoints">
+                Skill Points: <span id="player-skillPoints">0</span>
+              </h2>
+            </div>
             <div id="skill-tree-container">
               <!-- Skill tree will be dynamically generated here -->
             </div>
@@ -108,6 +112,15 @@
         <section id="rebirths" class="game-section hidden">
           <h1>Clicker Looter Monster Game</h1>
           <h2>Rebirths</h2>
+          <p>You have rebirthed <span id="player-rebirths">0</span> times</p>
+          <p>Total Power Bonus: <span id="player-rebirths-bonus">0</span>%</p>
+
+          <div id="progress-bar-container">
+            <div id="progress-bar">
+              <div id="progress-bar-fill"></div>
+            </div>
+          </div>
+
           <button id="rebirth-button">Rebirth</button>
         </section>
         <section id="achievements" class="game-section hidden">

@@ -42,6 +42,7 @@ const playerMaxExperienceElement = document.getElementById(
   "player-max-experience"
 );
 const playerDamageElement = document.getElementById("player-damage");
+const playerSkillPointsElement = document.getElementById("player-skillPoints");
 const attackButton = document.getElementById("attack-button");
 const skillTreeContainer = document.getElementById("skill-tree-container");
 const skillDescriptionElement = document.getElementById("skill-description");
@@ -208,6 +209,20 @@ function updateUI() {
   achievements.checkAchievements(player);
   updateAchievementsList();
   updateWorldAndAreaSelection();
+
+  let value;
+  if (player.level <= 100) {
+    value = player.level;
+  } else {
+    value = 100;
+  }
+
+  updateProgressBar(value);
+}
+
+function updateProgressBar(value) {
+  const progressBarFill = document.getElementById("progress-bar-fill");
+  progressBarFill.style.width = `${value}%`;
 }
 
 function updatePlayerStatsUI() {
@@ -217,6 +232,7 @@ function updatePlayerStatsUI() {
   playerColsElement.textContent = player.cols;
   playerRebirthsElement.textContent = player.rebirths;
   playerDamageElement.textContent = player.damage;
+  playerSkillPointsElement.textContent = player.skillPoints;
 }
 
 function updateMonsterUI() {
