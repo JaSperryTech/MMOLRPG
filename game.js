@@ -13,7 +13,6 @@ import * as commands from "./modules/commands.js";
 let player = new Player(currentVersion);
 let achievements = new Achievements(player);
 let playerSkills = skills;
-
 let currentMonster = null;
 let selectedSkill = null;
 
@@ -34,15 +33,6 @@ const monsterNameElement = document.getElementById("monster-name");
 const monsterHealthElement = document.getElementById("monster-health");
 const monsterMaxHealthElement = document.getElementById("monster-max-health");
 const monsterLevelElement = document.getElementById("monster-level");
-const playerRebirthsElement = document.getElementById("player-rebirths");
-const playerColsElement = document.getElementById("player-cols");
-const playerLevelElement = document.getElementById("player-level");
-const playerExperienceElement = document.getElementById("player-experience");
-const playerMaxExperienceElement = document.getElementById(
-  "player-max-experience"
-);
-const playerDamageElement = document.getElementById("player-damage");
-const playerSkillPointsElement = document.getElementById("player-skillPoints");
 const attackButton = document.getElementById("attack-button");
 const skillTreeContainer = document.getElementById("skill-tree-container");
 const skillDescriptionElement = document.getElementById("skill-description");
@@ -136,19 +126,13 @@ function loadPlayerData() {
     const unlockedSkills = localStorage.getItem("playerSkills");
     const inventory = localStorage.getItem("playerInventory");
 
-    if (!version) {
-      localStorage.clear();
-      savePlayerData();
-    }
-
-    if (outdatedVersions.includes(version)) {
-      console.log(`Wiping outdated save data from version: ${version}`);
+    if (!version || outdatedVersions.includes(version)) {
       localStorage.clear();
       savePlayerData();
     }
 
     player = new Player(currentVersion); // Ensure player is initialized with current version
-    player.version = version;
+    player.version = version || currentVersion;
     player.level = level ? parseInt(level, 10) : player.level;
     player.experience = experience
       ? parseInt(experience, 10)
@@ -210,29 +194,34 @@ function updateUI() {
   updateAchievementsList();
   updateWorldAndAreaSelection();
 
-  let value;
-  if (player.level <= 100) {
-    value = player.level;
-  } else {
-    value = 100;
-  }
+  updateProgressBar(player.level);
+}
 
-  updateProgressBar(value);
+function updateTextContent(element, text) {
+  if (element && text !== undefined) {
+    element.textContent = text;
+  }
+}
+
+function updatePlayerStatsUI() {
+  const stats = {
+    playerLevelElement: player.level,
+    playerExperienceElement: player.experience,
+    playerMaxExperienceElement: player.getExperienceToNextLevel(),
+    playerColsElement: player.cols,
+    playerRebirthsElement: player.rebirths,
+    playerDamageElement: player.damage,
+    playerSkillPointsElement: player.skillPoints,
+  };
+
+  for (const [element, value] of Object.entries(stats)) {
+    updateTextContent(document.getElementById(element), value);
+  }
 }
 
 function updateProgressBar(value) {
   const progressBarFill = document.getElementById("progress-bar-fill");
   progressBarFill.style.width = `${value}%`;
-}
-
-function updatePlayerStatsUI() {
-  playerLevelElement.textContent = player.level;
-  playerExperienceElement.textContent = player.experience;
-  playerMaxExperienceElement.textContent = player.getExperienceToNextLevel();
-  playerColsElement.textContent = player.cols;
-  playerRebirthsElement.textContent = player.rebirths;
-  playerDamageElement.textContent = player.damage;
-  playerSkillPointsElement.textContent = player.skillPoints;
 }
 
 function updateMonsterUI() {
@@ -251,6 +240,20 @@ function updateMonsterUI() {
 
 function updateInventoryDisplay(player) {
   renderInventory(player.inventory);
+}
+
+function filterAndSortInventory(type = "all", sortBy = "name") {
+  let filteredItems = player.inventory;
+
+  if (type !== "all") {
+    filteredItems = player.inventory.filter((item) => item.type === type);
+  }
+
+  const sortedItems = filteredItems.sort((a, b) =>
+    sortBy === "name" ? a.Name.localeCompare(b.Name) : b.Value - a.Value
+  );
+
+  renderInventory(sortedItems);
 }
 
 function renderInventory(items) {
@@ -454,7 +457,7 @@ function setupEventListeners() {
     }
   });
 
-  // New class selection listeners
+  // Class selection listeners
   document.getElementById("select-warrior").addEventListener("click", () => {
     player.class = "warrior";
     selectClass("warrior");
@@ -481,22 +484,14 @@ function setupEventListeners() {
         selectedSkill.name
       )
     ) {
-      console.log(
-        `Attempting to apply effect for skill: ${selectedSkill.name} in ${player.class} - ${selectedSkill.subClass}`
-      );
-
-      // Apply the skill's effect using the correct subClass and skillName
       applyEffect(
         player,
         player.class,
         selectedSkill.subClass,
         selectedSkill.name
       );
-
-      // Deduct skill points
       player.skillPoints -= selectedSkill.cost;
 
-      // Update UI and save player data
       updateUI();
       savePlayerData();
     } else {
@@ -504,37 +499,28 @@ function setupEventListeners() {
     }
   });
 
+  // Use filterAndSortInventory function in filter buttons
   document.getElementById("filter-all").addEventListener("click", () => {
-    renderInventory(player.inventory);
+    filterAndSortInventory("all");
   });
 
   document.getElementById("filter-weapons").addEventListener("click", () => {
-    const filteredItems = player.inventory.filter(
-      (item) => item.type === "Weapon"
-    );
-    renderInventory(filteredItems);
+    filterAndSortInventory("Weapon");
   });
 
   document
     .getElementById("filter-consumables")
     .addEventListener("click", () => {
-      const filteredItems = player.inventory.filter(
-        (item) => item.type === "Consumable"
-      );
-      renderInventory(filteredItems);
+      filterAndSortInventory("Consumable");
     });
 
-  // Sorting
+  // Use filterAndSortInventory function in sort buttons
   document.getElementById("sort-name").addEventListener("click", () => {
-    const sortedItems = [...player.inventory].sort((a, b) =>
-      a.Name.localeCompare(b.Name)
-    );
-    renderInventory(sortedItems);
+    filterAndSortInventory("all", "name");
   });
 
   document.getElementById("sort-value").addEventListener("click", () => {
-    const sortedItems = [...player.inventory].sort((a, b) => b.Value - a.Value);
-    renderInventory(sortedItems);
+    filterAndSortInventory("all", "value");
   });
 
   document.getElementById("rebirth-button").addEventListener("click", () => {
