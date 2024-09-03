@@ -144,7 +144,6 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%; /* Ensure it takes full width of its container */
-  
 }
 
 #main-content section {
@@ -283,6 +282,7 @@ section h2 {
 }
 
 .inventory-item {
+  cursor: pointer;
   width: 100%; /* Full width of the grid cell */
   height: 100px; /* Fixed height to maintain aspect ratio */
   padding: 10px;
@@ -296,6 +296,23 @@ section h2 {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+
+.tooltip {
+  position: absolute;
+  background: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+.exit-button {
+  margin-top: 10px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

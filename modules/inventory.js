@@ -1,13 +1,7 @@
 // modules/Inventory.js
 export default class Inventory {
   constructor() {
-    this.items = [];
-    this.equipmentSlots = {
-      head: null,
-      body: null,
-      legs: null,
-      weapon: null,
-    };
+    this.items = {};
   }
 
   addItem(item) {
@@ -26,7 +20,8 @@ export default class Inventory {
     return this.items;
   }
 
-  equipItem(slot, item) {
+  equipItem(player, item) {
+    slot = item.type;
     // Check if the slot exists and the item is in the inventory
     if (!this.equipmentSlots.hasOwnProperty(slot)) {
       console.error(`Invalid slot: ${slot}`);
@@ -36,29 +31,27 @@ export default class Inventory {
       console.error(`Item not in inventory: ${item}`);
       return;
     }
-
-    // Equip the item
-    this.equipmentSlots[slot] = item;
-    this.removeItem(item);
-    console.log(`${item} equipped to ${slot}`);
+    if (player.level >= item.levelRequirement) {
+      player.equipment[slot] = item;
+      // Update player stats based on the item equipped
+      player.damage += item.attack;
+      console.log(`${player.name} equipped ${item.name}`);
+    } else {
+      console.log(`Level too low to equip ${item.name}`);
+    }
   }
 
-  unequipItem(slot) {
-    // Check if the slot exists and an item is equipped
-    if (!this.equipmentSlots.hasOwnProperty(slot)) {
-      console.error(`Invalid slot: ${slot}`);
-      return;
+  unequipItem(player, slot) {
+    const item = player.equipment[slot];
+    if (item) {
+      // Adjust stats when item is unequipped
+      player.attack -= item.attack || 0;
+      player.defense -= item.defense || 0;
+      player.equipment[slot] = null;
+      console.log(`${player.name} unequipped ${item.name}`);
+    } else {
+      console.log(`No item equipped in the ${slot} slot`);
     }
-    if (!this.equipmentSlots[slot]) {
-      console.error(`No item equipped in slot: ${slot}`);
-      return;
-    }
-
-    // Unequip the item
-    const unequippedItem = this.equipmentSlots[slot];
-    this.equipmentSlots[slot] = null;
-    this.addItem(unequippedItem);
-    console.log(`${unequippedItem} unequipped from ${slot}`);
   }
 
   listEquippedItems() {

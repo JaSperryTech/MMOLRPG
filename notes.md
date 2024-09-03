@@ -26,9 +26,9 @@
 
 ## 5. New Achievements
 
-- [ ] Design new achievements
-- [ ] Implement new achievements
-- [ ] Test new achievements
+- [x] Design new achievements
+- [x] Implement new achievements
+- [x] Test new achievements
 
 ## 6. Update Rebirth Screen
 
@@ -44,21 +44,42 @@
 
 ## 8. Equipment System
 
-- [ ] Design equipment system
+- [x] Design equipment system
 - [ ] Implement equipment functionality
 - [ ] Test equipment system
 
-## 9. Working Inventory System
-
-- [ ] Review current inventory system
-- [ ] Implement necessary fixes and updates
-- [ ] Test inventory system
+## 9. Update Inventory Sorting
 
 ## 10. Hover Item Display System
 
-- [ ] Design hover item display system
-- [ ] Implement hover functionality
+- [x] Design hover item display system
+- [x] Implement hover functionality
 - [ ] Test hover item display
+
+## 11. Fix Boss Spawning on Round 10
+
+- [ ] Design Spawning Boss based on Rounds
+- [ ] Implement Spawning functionality
+- [ ] Test Spawning
+
+## 12. Fix Achiement Display on Hover
+
+## 13. Code Management
+
+- [ ] Break down Functions
+  - [ ] Multiple different UI Functions
+  - [ ] Multiple different Event Handles
+- [ ] Global Debug System
+- [ ] Error Handling
+- [ ] Optimization
+
+## 14. Enhanced Feedback
+
+## 15. Version Controlling
+
+## 16. Add Crafing Module
+
+## 17. Add Quest Module
 
 # Notes
 
@@ -67,6 +88,3 @@
 | **Warrior** (Active) |  Berserker   |   Paladin    |    Guardian    |
 |   **Mage** (Idle)    | Elementalist | Necromancer  |   Enchanter    |
 | **Archer** (Passive) |    Ranger    | Sharpshooter |  Beastmaster   |
-
-center section
-fix achiements

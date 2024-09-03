@@ -1,5 +1,5 @@
 // game.js
-const currentVersion = "0.4.0";
+const currentVersion = "1.0.3";
 const outdatedVersions = []; // List of outdated versions
 
 import Player from "./modules/player.js";
@@ -20,6 +20,7 @@ let selectedSkill = null;
 const homeButton = document.getElementById("home-button");
 const skilltreeButton = document.getElementById("skilltree-button");
 const inventoryButton = document.getElementById("inventory-button");
+const equipmentButton = document.getElementById("equipment-button");
 const rebirthsButton = document.getElementById("rebirths-button");
 const achievementsButton = document.getElementById("achievements-button");
 const currentWorldElement = document.getElementById("current-world");
@@ -85,6 +86,7 @@ function savePlayerData() {
     localStorage.setItem("playerSkills", JSON.stringify(playerSkills));
 
     localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
+    localStorage.setItem("playerEquipment", JSON.stringify(player.equipment));
   } catch (error) {
     console.error("Failed to save player data:", error);
   }
@@ -125,6 +127,7 @@ function loadPlayerData() {
     const achievementsData = localStorage.getItem("playerAchievements");
     const unlockedSkills = localStorage.getItem("playerSkills");
     const inventory = localStorage.getItem("playerInventory");
+    const equipment = localStorage.getItem("playerEquipment");
 
     if (!version || outdatedVersions.includes(version)) {
       localStorage.clear();
@@ -139,6 +142,7 @@ function loadPlayerData() {
       : player.experience;
     player.damage = damage ? parseInt(damage, 10) : player.damage;
     player.inventory = inventory ? JSON.parse(inventory) : [];
+    player.equipment = equipment ? JSON.parse(equipment) : [];
     player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
     player.cols = cols ? parseInt(cols, 10) : player.cols;
     player.values = values ? JSON.parse(values) : [];
@@ -264,8 +268,98 @@ function renderInventory(items) {
     const itemElement = document.createElement("div");
     itemElement.classList.add("inventory-item");
     itemElement.innerHTML = `<p>${item.Name}</p><p>Value: ${item.Value}</p>`;
+
+    // Store all relevant item data
+    itemElement.dataset.name = item.Name;
+    itemElement.dataset.value = item.Value;
+    itemElement.dataset.type = item.Type;
+    itemElement.dataset.damage = item.Damage || null;
+    itemElement.dataset.description = item.Description;
+    itemElement.dataset.rarity = item.Rarity;
+
     inventoryGrid.appendChild(itemElement);
+
+    // Add click effect to show persistent tooltip
+    itemElement.addEventListener("click", handleItemClick);
   });
+}
+
+function handleItemClick(event) {
+  // Remove any existing tooltips
+  const existingTooltip = document.querySelector(".tooltip");
+  if (existingTooltip) {
+    existingTooltip.remove();
+  }
+
+  // Get the relevant data from the clicked item
+  const itemName = event.currentTarget.dataset.name;
+  const itemType = event.currentTarget.dataset.type;
+  const itemDamage = event.currentTarget.dataset.damage;
+  const itemDescription = event.currentTarget.dataset.description;
+  const itemValue = event.currentTarget.dataset.value;
+  const itemRarity = event.currentTarget.dataset.rarity;
+
+  // Create a new tooltip with more detailed information
+  const tooltip = document.createElement("div");
+  tooltip.classList.add("tooltip");
+
+  // Build the tooltip content
+  tooltip.innerHTML = `
+    <p><strong>${itemName}</strong></p>
+    <p>Type: ${itemType}</p>
+    ${
+      itemDamage !== "null" && itemDamage !== ""
+        ? `<p>Damage: ${itemDamage}</p>`
+        : ""
+    }
+    <p>Description: ${itemDescription}</p>
+    <p>Value: ${itemValue}</p>
+    <p>Rarity: ${itemRarity}</p>
+    <button class="exit-button">Exit</button>
+  `;
+
+  // Add Equip button for certain types
+  const equipableTypes = [
+    "head",
+    "chest",
+    "legs",
+    "feet",
+    "weapon",
+    "shield",
+    "accessory",
+  ];
+  if (equipableTypes.includes(itemType.toLowerCase())) {
+    const equipButton = document.createElement("button");
+    equipButton.textContent = "Equip";
+    equipButton.classList.add("equip-button");
+    equipButton.addEventListener("click", () => {
+      // Handle equipping logic here
+      player.addEquipment(
+        itemName,
+        itemType,
+        itemDamage,
+        itemDescription,
+        itemValue,
+        itemRarity
+      );
+    });
+    tooltip.appendChild(equipButton);
+  }
+
+  // Position the tooltip
+  document.body.appendChild(tooltip);
+  const rect = event.currentTarget.getBoundingClientRect();
+  tooltip.style.left = `${rect.left + window.pageXOffset}px`;
+  tooltip.style.top = `${rect.top + rect.height + window.pageYOffset}px`;
+
+  // Add event listener to the exit button
+  const exitButton = tooltip.querySelector(".exit-button");
+  exitButton.addEventListener("click", () => {
+    tooltip.remove();
+  });
+
+  // Store reference to the tooltip
+  event.currentTarget.tooltipElement = tooltip;
 }
 
 function updateAchievementsList() {
@@ -332,6 +426,7 @@ function populateAreaOptions() {
   const currentWorld = worlds[`World${player.values.world}`];
   if (!currentWorld) {
     console.error("Invalid world selection");
+    location.reload();
     return;
   }
 
@@ -429,6 +524,7 @@ function setupEventListeners() {
   homeButton.addEventListener("click", () => switchSection("main"));
   skilltreeButton.addEventListener("click", () => switchSection("skilltree"));
   inventoryButton.addEventListener("click", () => switchSection("inventoryB"));
+  equipmentButton.addEventListener("click", () => switchSection("equipment"));
   rebirthsButton.addEventListener("click", () => switchSection("rebirths"));
   achievementsButton.addEventListener("click", () =>
     switchSection("achievements")
@@ -525,7 +621,7 @@ function setupEventListeners() {
 
   document.getElementById("rebirth-button").addEventListener("click", () => {
     if (player.level >= 100) {
-      player.rebirth();
+      player.rebirth(player);
       updateUI();
       savePlayerData();
     } else {

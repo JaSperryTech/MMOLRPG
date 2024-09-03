@@ -8,7 +8,11 @@ const createDrops = (dropDefinitions) => {
         return {
           name: name,
           chance: chance,
-          baseValue: items[name].baseValue,
+          type: items[name].type,
+          attack: items[name].attack,
+          description: items[name].description,
+          value: items[name].baseValue,
+          rarity: items[name].rarity,
         };
       }
       return null;
@@ -93,17 +97,17 @@ export const worlds = {
       7: { monsters: ["Slime"] },
       8: { monsters: ["Slime"] },
       9: { monsters: ["Slime"] },
-      10: { monsters: ["Slime", "Goblin", "King_Slime"] },
-      11: { monsters: ["Slime", "Goblin"] },
-      12: { monsters: ["Slime", "Goblin"] },
-      13: { monsters: ["Slime", "Goblin"] },
-      14: { monsters: ["Slime", "Goblin"] },
+      10: { monsters: ["Slime"], boss: ["King_Slime"] },
+      11: { monsters: ["Goblin"] },
+      12: { monsters: ["Goblin"] },
+      13: { monsters: ["Goblin"] },
+      14: { monsters: ["Goblin"] },
       15: { monsters: ["Goblin"] },
       16: { monsters: ["Goblin"] },
       17: { monsters: ["Goblin"] },
       18: { monsters: ["Goblin"] },
       19: { monsters: ["Goblin"] },
-      20: { monsters: ["King_Goblin"] },
+      20: { monsters: ["Goblin"], boss: ["King_Goblin"] },
     },
   },
 };

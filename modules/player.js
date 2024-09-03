@@ -10,6 +10,15 @@ export default class Player {
     this.rebirths = 0;
     this.skillPoints = 0;
     this.inventory = [];
+    this.equipment = {
+      head: null,
+      chest: null,
+      legs: null,
+      feet: null,
+      weapon: null,
+      shield: null,
+      accessory: null,
+    };
     this.unlockedSkills = [];
     this.values = {
       round: 0,
@@ -22,11 +31,6 @@ export default class Player {
       world: 1,
     };
     this.achievements = [];
-  }
-
-  updateDamage() {
-    this.damage = this.applyRebirthBonuses;
-    return totalDamage;
   }
 
   gainExperience(amount) {
@@ -65,42 +69,68 @@ export default class Player {
   }
 
   addItem(itemObject) {
-    this.inventory.push({ Name: itemObject.Name, Value: itemObject.Value });
+    this.inventory.push({
+      Name: itemObject.Name,
+      Type: itemObject.Type,
+      Attack: itemObject.Attack,
+      Description: itemObject.Description,
+      Value: itemObject.Value,
+      Rarity: itemObject.Rarity,
+    });
   }
 
-  rebirth() {
+  addEquipment(
+    itemName,
+    itemType,
+    itemDamage,
+    itemDescription,
+    itemValue,
+    itemRarity
+  ) {
+    const itemObject = {
+      Name: itemName,
+      Type: itemType,
+      Damage: itemDamage,
+      Description: itemDescription,
+      Value: itemValue,
+      Rarity: itemRarity,
+    };
+    this.equipment[itemType] = itemObject;
+  }
+
+  rebirth(player) {
     // Reset player stats
-    this.level = 1;
-    this.experience = 0;
-    this.damage = 1;
-    this.cols = 0;
+    player.level = 1;
+    player.experience = 0;
+    player.damage = 1;
+    player.cols = 0;
 
     // Optionally, you can keep certain progress
     // For example, you could keep some form of currency or items
 
     // Increment rebirth count
-    this.rebirths++;
+    player.rebirths++;
 
     // Optionally, apply rebirth bonuses
-    this.applyRebirthBonuses();
+    player.applyRebirthBonuses(player);
 
     // Optionally, you might want to reset or modify player.values
-    this.values.round = 0;
-    this.values.area = 1;
-    this.values.world = 1;
-    this.highestValues.round = 0;
-    this.highestValues.area = 1;
-    this.highestValues.world = 1;
+    player.values.round = 0;
+    player.values.area = 1;
+    player.values.world = 1;
+    player.highestValues.round = 0;
+    player.highestValues.area = 1;
+    player.highestValues.world = 1;
   }
 
-  applyRebirthBonuses() {
+  applyRebirthBonuses(player) {
     // Multiplicative bonus
     const damageMultiplier = 1 + 0.01 * this.rebirths;
-    this.damage = Math.floor(this.damage * damageMultiplier);
+    player.damage = Math.floor(this.damage * damageMultiplier);
 
     // Additive bonus
     const additiveBonus = 5 * this.rebirths;
-    this.damage += additiveBonus;
+    player.damage += additiveBonus;
   }
 
   updateValues({ round, area, world }) {

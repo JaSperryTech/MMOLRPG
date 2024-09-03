@@ -27,11 +27,6 @@ export default class Monster {
 
   calculateExperience(level) {
     const monsterData = monsters[this.name];
-    if (this.isBoss) {
-      // Bosses give more experience but with less aggressive scaling
-      return monsterData.experience + level * 10; // Example scaling
-    }
-    // Regular monsters scale with level
     return 3 * level ** 2 + 5 * level + monsterData.experience;
   }
 

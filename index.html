@@ -1,144 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Web Game with RNG Drops and MMO Aspects"
-    />
-    <meta name="robots" content="index" />
-    <title>Clicker Looter Monster Game</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div id="container">
-      <aside id="sidebar">
-        <h2>Menu</h2>
-        <button id="home-button">Home</button>
-        <button id="skilltree-button">Skill Tree</button>
-        <button id="inventory-button">Inventory</button>
-        <button id="rebirths-button">Rebirths</button>
-        <button id="achievements-button">Achievements</button>
-      </aside>
-      <main id="main-content">
-        <section id="main" class="game-section">
-          <h1>Clicker Looter Monster Game</h1>
-          <div id="info">
-            <p>Current World: <span id="current-world">1</span></p>
-            <p>Current Area: <span id="current-area">1</span></p>
-            <p>Current Round: <span id="current-round">1</span></p>
-          </div>
 
-          <div id="selection-container">
-            <label for="world-select">Select World:</label>
-            <select id="world-select" disabled></select>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Web Game with RNG Drops and MMO Aspects" />
+  <meta name="robots" content="index" />
+  <title>Clicker Looter Monster Game</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
 
-            <label for="area-select">Select Area:</label>
-            <select id="area-select" disabled></select>
+<body>
+  <div id="container">
+    <aside id="sidebar">
+      <h2>Menu</h2>
+      <button id="home-button">Home</button>
+      <button id="skilltree-button">Skill Tree</button>
+      <button id="inventory-button">Inventory</button>
+      <button id="equipment-button">Equipment</button>
+      <button id="rebirths-button">Rebirths</button>
+      <button id="achievements-button">Achievements</button>
+    </aside>
+    <main id="main-content">
+      <section id="main" class="game-section">
+        <h1>Clicker Looter Monster Game</h1>
+        <div id="info">
+          <p>Current World: <span id="current-world">1</span></p>
+          <p>Current Area: <span id="current-area">1</span></p>
+          <p>Current Round: <span id="current-round">1</span></p>
+        </div>
 
-            <button id="confirm-selection">Confirm Selection</button>
-          </div>
+        <div id="selection-container">
+          <label for="world-select">Select World:</label>
+          <select id="world-select" disabled></select>
 
-          <div id="stats">
-            <div id="player-display">
-              <div id="health-bar-container">
-                <div id="health-bar">
-                  <div id="health-bar-fill"></div>
-                  <p id="name-label"><span id="monster-name">Nameless</span></p>
-                  <p id="health-label">
-                    <span id="monster-health">100</span>/<span
-                      id="monster-max-health"
-                      >100</span
-                    >
-                  </p>
-                  <p id="level-label">LV: <span id="monster-level">1</span></p>
-                </div>
+          <label for="area-select">Select Area:</label>
+          <select id="area-select" disabled></select>
+
+          <button id="confirm-selection">Confirm Selection</button>
+        </div>
+
+        <div id="stats">
+          <div id="player-display">
+            <div id="health-bar-container">
+              <div id="health-bar">
+                <div id="health-bar-fill"></div>
+                <p id="name-label"><span id="monster-name">Nameless</span></p>
+                <p id="health-label">
+                  <span id="monster-health">100</span>/<span id="monster-max-health">100</span>
+                </p>
+                <p id="level-label">LV: <span id="monster-level">1</span></p>
               </div>
-              <p>Cols: <span id="playerColsElement">0</span></p>
-              <p>Player Level: <span id="playerLevelElement">1</span></p>
-              <p>
-                Player Experience:
-                <span id="playerExperienceElement">0</span>/<span
-                  id="playerMaxExperienceElement"
-                  >0</span
-                >
-              </p>
-              <p>Attack Power: <span id="playerDamageElement">10</span></p>
             </div>
+            <p>Cols: <span id="playerColsElement">0</span></p>
+            <p>Player Level: <span id="playerLevelElement">1</span></p>
+            <p>
+              Player Experience:
+              <span id="playerExperienceElement">0</span>/<span id="playerMaxExperienceElement">0</span>
+            </p>
+            <p>Attack Power: <span id="playerDamageElement">10</span></p>
           </div>
-          <div id="attack-container">
-            <button id="attack-button">Attack!</button>
+        </div>
+        <div id="attack-container">
+          <button id="attack-button">Attack!</button>
+        </div>
+      </section>
+      <section id="skilltree" class="game-section hidden">
+        <h1>Clicker Looter Monster Game</h1>
+        <div id="chooseClass" class="hidden">
+          <h2>Select Your Main Class</h2>
+          <button id="select-warrior">Warrior</button>
+          <button id="select-mage">Mage</button>
+          <button id="select-archer">Archer</button>
+        </div>
+        <div id="skilltreeContainer" class="hidden">
+          <div class="header-container">
+            <h2>Skill Tree</h2>
+            <h2 id="skillPoints">
+              Skill Points: <span id="playerSkillPointsElement">0</span>
+            </h2>
           </div>
-        </section>
-        <section id="skilltree" class="game-section hidden">
-          <h1>Clicker Looter Monster Game</h1>
-          <div id="chooseClass" class="hidden">
-            <h2>Select Your Main Class</h2>
-            <button id="select-warrior">Warrior</button>
-            <button id="select-mage">Mage</button>
-            <button id="select-archer">Archer</button>
+          <div id="skill-tree-container">
+            <!-- Skill tree will be dynamically generated here -->
           </div>
-          <div id="skilltreeContainer" class="hidden">
-            <div class="header-container">
-              <h2>Skill Tree</h2>
-              <h2 id="skillPoints">
-                Skill Points: <span id="playerSkillPointsElement">0</span>
-              </h2>
-            </div>
-            <div id="skill-tree-container">
-              <!-- Skill tree will be dynamically generated here -->
-            </div>
-            <div id="skill-details">
-              <h3>Skill Details</h3>
-              <p id="skill-description">Select a skill to see details.</p>
-              <button id="unlock-skill-button">Unlock Skill</button>
-            </div>
+          <div id="skill-details">
+            <h3>Skill Details</h3>
+            <p id="skill-description">Select a skill to see details.</p>
+            <button id="unlock-skill-button">Unlock Skill</button>
           </div>
-        </section>
-        <section id="inventoryB" class="game-section hidden">
-          <h1>Clicker Looter Monster Game</h1>
-          <h2>Inventory</h2>
-          <div id="inventory">
-            <div id="inventory-controls">
-              <button id="filter-all">All</button>
-              <button id="filter-weapons">Weapons</button>
-              <button id="filter-consumables">Consumables</button>
-              <button id="sort-name">Sort by Name</button>
-              <button id="sort-value">Sort by Value</button>
-            </div>
-            <div id="inventory-grid" class="inventory-grid"></div>
+        </div>
+      </section>
+      <section id="inventoryB" class="game-section hidden">
+        <h1>Clicker Looter Monster Game</h1>
+        <h2>Inventory</h2>
+        <div id="inventory">
+          <div id="inventory-controls">
+            <button id="filter-all">All</button>
+            <button id="filter-weapons">Weapons</button>
+            <button id="filter-consumables">Consumables</button>
+            <button id="sort-name">Sort by Name</button>
+            <button id="sort-value">Sort by Value</button>
           </div>
-        </section>
-        <section id="rebirths" class="game-section hidden">
-          <h1>Clicker Looter Monster Game</h1>
-          <h2>Rebirths</h2>
-          <p>
-            You have rebirthed <span id="playerRebirthsElement">0</span> times
-          </p>
-          <p>
-            Total Power Bonus: <span id="playerRebirthsBonusElement">0</span>%
-          </p>
-
-          <div id="progress-bar-container">
-            <div id="progress-bar">
-              <div id="progress-bar-fill"></div>
-            </div>
+          <div id="inventory-grid" class="inventory-grid"></div>
+        </div>
+      </section>
+      <section id="equipment" class="game-section hidden">
+        <h1>Equipment</h1>
+        <div id="equipment-grid" class="grid grid-cols-3 gap-4 p-4 bg-gray-800 rounded-md shadow-md">
+          <!-- Head Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Head</p>
+            <div class="item-icon bg-gray-500 w-16 h-16 mx-auto rounded-full"></div>
           </div>
 
-          <button id="rebirth-button">Rebirth</button>
-        </section>
-        <section id="achievements" class="game-section hidden">
-          <h1>Clicker Looter Monster Game</h1>
-          <h2>Achievements</h2>
-          <div id="achievements-grid" class="grid-container"></div>
-        </section>
-      </main>
-      <footer id="footer">
-        <p>&copy; 2024 Clicker Looter Monster Game. All rights reserved.</p>
-      </footer>
-    </div>
+          <!-- Chest Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Chest</p>
+            <div class="item-icon bg-gray-500 w-16 h-16 mx-auto rounded-md"></div>
+          </div>
 
-    <script type="module" src="game.js"></script>
-  </body>
+          <!-- Weapon Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Weapon</p>
+            <div class="item-icon bg-gray-500 w-16 h-32 mx-auto"></div>
+            <!-- Taller shape for weapon -->
+          </div>
+
+          <!-- Legs Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Legs</p>
+            <div class="item-icon bg-gray-500 w-16 h-24 mx-auto"></div>
+          </div>
+
+          <!-- Feet Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Feet</p>
+            <div class="item-icon bg-gray-500 w-16 h-16 mx-auto rounded-full"></div>
+          </div>
+
+          <!-- Accessory Slot -->
+          <div class="equipment-slot bg-gray-700 border border-gray-600 rounded-md p-2">
+            <p class="text-center text-white">Accessory</p>
+            <div class="item-icon bg-gray-500 w-16 h-16 mx-auto rounded-md"></div>
+          </div>
+        </div>
+      </section>
+      <section id="rebirths" class="game-section hidden">
+        <h1>Clicker Looter Monster Game</h1>
+        <h2>Rebirths</h2>
+        <p>
+          You have rebirthed <span id="playerRebirthsElement">0</span> times
+        </p>
+        <p>
+          Total Power Bonus: <span id="playerRebirthsBonusElement">0</span>%
+        </p>
+
+        <div id="progress-bar-container">
+          <div id="progress-bar">
+            <div id="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <button id="rebirth-button">Rebirth</button>
+      </section>
+      <section id="achievements" class="game-section hidden">
+        <h1>Clicker Looter Monster Game</h1>
+        <h2>Achievements</h2>
+        <div id="achievements-grid" class="grid-container"></div>
+      </section>
+    </main>
+    <footer id="footer">
+      <p>&copy; 2024 Clicker Looter Monster Game. All rights reserved.</p>
+    </footer>
+  </div>
+  <script type="module" src="game.js"></script>
+</body>
+
 </html>
