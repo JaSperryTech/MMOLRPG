@@ -67,3 +67,6 @@
 | **Warrior** (Active) |  Berserker   |   Paladin    |    Guardian    |
 |   **Mage** (Idle)    | Elementalist | Necromancer  |   Enchanter    |
 | **Archer** (Passive) |    Ranger    | Sharpshooter |  Beastmaster   |
+
+center section
+fix achiements
