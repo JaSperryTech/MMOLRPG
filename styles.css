@@ -10,9 +10,16 @@
   --health-red: #f44336;
 }
 
+@font-face {
+  font-family: 'Fira Code';
+  src: url(/font/FiraCode-Regular.ttf) format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
   margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Fira Code","Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   min-height: 100vh;
   background-color: var(--background-color);
@@ -72,71 +79,6 @@ body {
   transform: translateX(-100%);
 }
 
-/* Toggle Button Styles */
-#sidebar-toggle {
-  display: none; /* Hidden by default on large screens */
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  background-color: #3498db; /* Adjust as needed */
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  #container {
-    flex-direction: column; /* Stack sidebar on top of content */
-  }
-
-  #sidebar {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: -100%; /* Hide sidebar by default */
-    height: 100%;
-    z-index: 1000;
-    transform: translateX(-100%); /* Hide sidebar by default */
-    transition: transform 0.3s ease;
-  }
-
-  #sidebar.open {
-    transform: translateX(0); /* Show sidebar */
-  }
-
-  #sidebar-toggle {
-    display: block; /* Show toggle button on small screens */
-  }
-
-  #main-content {
-    margin-left: 0; /* No margin on smaller screens */
-    padding-top: 50px; /* Adjust for the sidebar height */
-  }
-}
-
-@media (max-width: 480px) {
-  #sidebar button {
-    font-size: 0.9em;
-    padding: 10px;
-  }
-
-  #attack-button {
-    font-size: 1em;
-    padding: 10px;
-  }
-
-  #skilltree h1 {
-    font-size: 1.5rem;
-  }
-
-  #skilltree h2 {
-    font-size: 1.2rem;
-  }
-}
-
 #main-content {
   flex: 1;
   padding: 20px;
@@ -159,16 +101,6 @@ body {
   border-bottom: 2px solid var(--primary-color);
   padding-bottom: 10px;
   color: var(--text-color);
-}
-
-@media (max-width: 768px) {
-  #main-content {
-    padding: 10px;
-  }
-
-  #main-content section {
-    margin: 10px 0; /* Adjust for smaller screens */
-  }
 }
 
 section h2 {
@@ -201,6 +133,10 @@ section h2 {
   margin: 0;
   font-size: 14px;
   flex: 1;
+  text-align: center;
+}
+
+#selection-container {
   text-align: center;
 }
 
@@ -296,18 +232,6 @@ section h2 {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .inventory-item {
-    height: 80px; /* Smaller size on smaller screens */
-  }
-}
-
-@media (max-width: 480px) {
-  .inventory-item {
-    height: 60px; /* Even smaller size on very small screens */
-  }
 }
 
 .inventory-item:hover {
