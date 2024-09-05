@@ -461,8 +461,12 @@ section h2 {
 }
 
 .achievement-box:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
-  border-color: #ffa500; /* Change border color on hover */
+  transform: scale(1.005);
+  border-color: #ffa500;
+  -webkit-transform: scale(1.005);
+  -moz-transform: scale(1.005);
+  -ms-transform: scale(1.005);
+  -o-transform: scale(1.005);
 }
 
 #rebirths {

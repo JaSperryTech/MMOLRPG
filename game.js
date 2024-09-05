@@ -409,7 +409,7 @@ function filterAndSortInventory(type = "all", sortBy = "name") {
   let filteredItems = player.inventory;
 
   if (type !== "all") {
-    filteredItems = player.inventory.filter((item) => item.type === type);
+    filteredItems = player.inventory.filter((item) => item.Type === type);
   }
 
   const sortedItems = filteredItems.sort((a, b) =>
@@ -480,7 +480,7 @@ function populateWorldOptions() {
 }
 
 function populateAreaOptions() {
-  const currentWorld = worlds[`World${player.values.world}`];
+  const currentWorld = worlds[`World${player.values.world}`] || null;
   if (!currentWorld) {
     console.error("Invalid world selection");
     location.reload();
@@ -658,14 +658,8 @@ function setupEventListeners() {
   });
 
   document.getElementById("filter-weapons").addEventListener("click", () => {
-    filterAndSortInventory("Weapon");
+    filterAndSortInventory("weapon");
   });
-
-  document
-    .getElementById("filter-consumables")
-    .addEventListener("click", () => {
-      filterAndSortInventory("Consumable");
-    });
 
   // Use filterAndSortInventory function in sort buttons
   document.getElementById("sort-name").addEventListener("click", () => {

@@ -60,7 +60,7 @@ export const items = {
   KingSlimeCrown: {
     id: "item-008",
     name: "King Slime Crown",
-    type: "helmet",
+    type: "head",
     description: "Provides a significant boost to defense.",
     value: 200,
     rarity: "common",
@@ -176,7 +176,7 @@ export const items = {
   KingGoblinCrown: {
     id: "item-022",
     name: "King Goblin’s Crown",
-    type: "helmet",
+    type: "head",
     description: "Provides significant defensive bonuses.",
     value: 180,
     rarity: "uncommon",
