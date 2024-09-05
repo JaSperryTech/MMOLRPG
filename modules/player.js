@@ -17,7 +17,8 @@ export default class Player {
       feet: null,
       weapon: null,
       shield: null,
-      accessory: null,
+      accessory1: null,
+      accessory2: null,
     };
     this.unlockedSkills = [];
     this.values = {
@@ -79,23 +80,73 @@ export default class Player {
     });
   }
 
-  addEquipment(
-    itemName,
-    itemType,
-    itemDamage,
-    itemDescription,
-    itemValue,
-    itemRarity
-  ) {
-    const itemObject = {
-      Name: itemName,
-      Type: itemType,
-      Damage: itemDamage,
-      Description: itemDescription,
-      Value: itemValue,
-      Rarity: itemRarity,
-    };
-    this.equipment[itemType] = itemObject;
+  addItem(item) {
+    this.inventory.push(item);
+  }
+
+  removeItem(itemName) {
+    this.inventory = this.inventory.filter((item) => item.name !== itemName);
+  }
+
+  hasItem(item) {
+    return this.inventory.some((i) => i.name === item.name);
+  }
+
+  equipItem(player, item) {
+    const slot = item.Type;
+    // Check if the slot exists and the item is in the inventory
+    if (!this.equipment.hasOwnProperty(slot)) {
+      console.error(`Invalid slot: ${slot}`);
+      return;
+    }
+    if (!this.hasItem(item)) {
+      console.error(`Item not in inventory: ${item.name}`);
+      return;
+    }
+    /*
+    if (this.level >= item.levelRequirement) {
+      // Unequip item from current slot if exists
+      if (this.equipment[slot]) {
+        this.unequipItem(this, slot);
+      }
+
+      // Equip new item
+      this.equipment[slot] = item;
+      this.damage += item.attack || 0;
+      console.log(`${player.name} equipped ${item.name}`);
+    } else {
+      console.log(`Level too low to equip ${item.name}`);
+    }
+    */
+    // Unequip item from current slot if exists
+    if (this.equipment[slot]) {
+      this.unequipItem(this, slot);
+    }
+
+    // Equip new item
+    player.equipment[slot] = item;
+    player.damage += item.attack || 0;
+    player.removeItem(item.Name);
+    console.log(`${this.name} equipped ${item.name}`);
+  }
+
+  unequipItem(player, slot) {
+    const item = player.equipment[slot];
+
+    if (!this.equipment[slot]) {
+      console.error(`No item to unequip in slot: ${slot}`);
+      return;
+    }
+
+    if (item) {
+      // Adjust stats when item is unequipped
+      player.damage -= item.attack || 0;
+      player.equipment[slot] = null;
+      player.addItem(item);
+      console.log(`Player unequipped ${item.Name}`);
+    } else {
+      console.log(`No item equipped in the ${slot} slot`);
+    }
   }
 
   rebirth(player) {

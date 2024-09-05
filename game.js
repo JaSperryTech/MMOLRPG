@@ -194,6 +194,7 @@ function updateUI() {
   updatePlayerStatsUI();
   updateMonsterUI();
   updateInventoryDisplay(player);
+  updateEquipmentDisplay(player);
   achievements.checkAchievements(player);
   updateAchievementsList();
   updateWorldAndAreaSelection();
@@ -246,20 +247,11 @@ function updateInventoryDisplay(player) {
   renderInventory(player.inventory);
 }
 
-function filterAndSortInventory(type = "all", sortBy = "name") {
-  let filteredItems = player.inventory;
-
-  if (type !== "all") {
-    filteredItems = player.inventory.filter((item) => item.type === type);
-  }
-
-  const sortedItems = filteredItems.sort((a, b) =>
-    sortBy === "name" ? a.Name.localeCompare(b.Name) : b.Value - a.Value
-  );
-
-  renderInventory(sortedItems);
+function updateEquipmentDisplay(player) {
+  renderEquipment(player.equipment);
 }
 
+// Function to render the inventory
 function renderInventory(items) {
   const inventoryGrid = document.getElementById("inventory-grid");
   inventoryGrid.innerHTML = ""; // Clear current items
@@ -280,24 +272,60 @@ function renderInventory(items) {
     inventoryGrid.appendChild(itemElement);
 
     // Add click effect to show persistent tooltip
-    itemElement.addEventListener("click", handleItemClick);
+    itemElement.addEventListener("click", (event) =>
+      handleItemClick(event, item, "inventory")
+    );
   });
 }
 
-function handleItemClick(event) {
+function renderEquipment(equipment) {
+  const equipmentSlots = {
+    head: document.getElementById("equipment-head"),
+    chest: document.getElementById("equipment-chest"),
+    legs: document.getElementById("equipment-legs"),
+    feet: document.getElementById("equipment-feet"),
+    shield: document.getElementById("equipment-shield"),
+    weapon: document.getElementById("equipment-weapon"),
+    accessory1: document.getElementById("equipment-accessory1"),
+    accessory2: document.getElementById("equipment-accessory2"),
+  };
+
+  for (const [slot, item] of Object.entries(equipment)) {
+    const slotElement = equipmentSlots[slot] || null;
+
+    if (!slotElement) {
+      console.error(`No element found for slot: ${slot}`);
+      continue; // Skip to the next iteration
+    }
+
+    slotElement.innerHTML = ""; // Clear the slot
+
+    // Clear any previous event listeners by cloning the node
+    const newSlotElement = slotElement.cloneNode(true);
+    slotElement.replaceWith(newSlotElement);
+
+    // Update slot with item details or show as unequipped
+    if (item) {
+      newSlotElement.innerHTML = `<p>${slot}: ${item.Name}</p><p>Value: ${item.Value}</p>`;
+      newSlotElement.addEventListener("click", (event) =>
+        handleItemClick(event, item, "equipment", slot)
+      );
+    } else {
+      newSlotElement.innerHTML = `<p>${slot}: Unequipped</p>`;
+    }
+
+    // Reassign the newSlotElement back to the equipmentSlots
+    equipmentSlots[slot] = newSlotElement;
+  }
+}
+
+// Function to handle item clicks and display tooltips
+function handleItemClick(event, item, source, slot = null) {
   // Remove any existing tooltips
   const existingTooltip = document.querySelector(".tooltip");
   if (existingTooltip) {
     existingTooltip.remove();
   }
-
-  // Get the relevant data from the clicked item
-  const itemName = event.currentTarget.dataset.name;
-  const itemType = event.currentTarget.dataset.type;
-  const itemDamage = event.currentTarget.dataset.damage;
-  const itemDescription = event.currentTarget.dataset.description;
-  const itemValue = event.currentTarget.dataset.value;
-  const itemRarity = event.currentTarget.dataset.rarity;
 
   // Create a new tooltip with more detailed information
   const tooltip = document.createElement("div");
@@ -305,20 +333,16 @@ function handleItemClick(event) {
 
   // Build the tooltip content
   tooltip.innerHTML = `
-    <p><strong>${itemName}</strong></p>
-    <p>Type: ${itemType}</p>
-    ${
-      itemDamage !== "null" && itemDamage !== ""
-        ? `<p>Damage: ${itemDamage}</p>`
-        : ""
-    }
-    <p>Description: ${itemDescription}</p>
-    <p>Value: ${itemValue}</p>
-    <p>Rarity: ${itemRarity}</p>
+    <p><strong>${item.Name}</strong></p>
+    <p>Type: ${item.Type}</p>
+    ${item.Damage ? `<p>Damage: ${item.Damage}</p>` : ""}
+    <p>Description: ${item.Description}</p>
+    <p>Value: ${item.Value}</p>
+    <p>Rarity: ${item.Rarity}</p>
     <button class="exit-button">Exit</button>
   `;
 
-  // Add Equip button for certain types
+  // Add Equip or Unequip buttons based on context
   const equipableTypes = [
     "head",
     "chest",
@@ -328,38 +352,71 @@ function handleItemClick(event) {
     "shield",
     "accessory",
   ];
-  if (equipableTypes.includes(itemType.toLowerCase())) {
-    const equipButton = document.createElement("button");
-    equipButton.textContent = "Equip";
-    equipButton.classList.add("equip-button");
-    equipButton.addEventListener("click", () => {
-      // Handle equipping logic here
-      player.addEquipment(
-        itemName,
-        itemType,
-        itemDamage,
-        itemDescription,
-        itemValue,
-        itemRarity
-      );
-    });
-    tooltip.appendChild(equipButton);
+
+  if (equipableTypes.includes(item.Type.toLowerCase())) {
+    if (source === "inventory") {
+      // Equip button for inventory items
+      const equipButton = document.createElement("button");
+      equipButton.textContent = "Equip";
+      equipButton.classList.add("equip-button");
+      equipButton.addEventListener("click", () => {
+        player.equipItem(player, item); // Equip the item
+        tooltip.remove(); // Remove tooltip after equipping
+        updateEquipmentDisplay(player); // Update the equipment display
+        updateInventoryDisplay(player); // Update the inventory display
+      });
+      tooltip.appendChild(equipButton);
+    } else if (source === "equipment" && slot) {
+      // Unequip button for equipped items
+      const unequipButton = document.createElement("button");
+      unequipButton.textContent = "Unequip";
+      unequipButton.classList.add("unequip-button");
+      unequipButton.addEventListener("click", () => {
+        player.unequipItem(player, slot); // Unequip the item
+        tooltip.remove(); // Remove tooltip after unequipping
+        updateEquipmentDisplay(player); // Update the equipment display
+        updateInventoryDisplay(player); // Update the inventory display
+      });
+      tooltip.appendChild(unequipButton);
+    }
   }
 
   // Position the tooltip
   document.body.appendChild(tooltip);
   const rect = event.currentTarget.getBoundingClientRect();
-  tooltip.style.left = `${rect.left + window.pageXOffset}px`;
-  tooltip.style.top = `${rect.top + rect.height + window.pageYOffset}px`;
+  let left = rect.left + window.pageXOffset;
+  let top = rect.top + rect.height + window.pageYOffset;
+
+  // Ensure tooltip stays within screen bounds
+  if (left + tooltip.offsetWidth > window.innerWidth) {
+    left = window.innerWidth - tooltip.offsetWidth - 10;
+  }
+  if (top + tooltip.offsetHeight > window.innerHeight) {
+    top = window.innerHeight - tooltip.offsetHeight - 10;
+  }
+
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
 
   // Add event listener to the exit button
   const exitButton = tooltip.querySelector(".exit-button");
   exitButton.addEventListener("click", () => {
     tooltip.remove();
   });
+}
 
-  // Store reference to the tooltip
-  event.currentTarget.tooltipElement = tooltip;
+function filterAndSortInventory(type = "all", sortBy = "name") {
+  let filteredItems = player.inventory;
+
+  if (type !== "all") {
+    filteredItems = player.inventory.filter((item) => item.type === type);
+  }
+
+  const sortedItems = filteredItems.sort((a, b) =>
+    sortBy === "name" ? a.Name.localeCompare(b.Name) : b.Value - a.Value
+  );
+
+  renderInventory(sortedItems);
 }
 
 function updateAchievementsList() {
