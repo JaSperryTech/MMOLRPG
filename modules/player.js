@@ -81,8 +81,14 @@ export default class Player {
   }
 
   removeItem(item) {
-    console.log("Removing item:", item.Name);
-    this.inventory = this.inventory.filter((item) => item.Name !== item.Name);
+    // Find the index of the first occurrence of the item with the matching name
+    const index = this.inventory.findIndex((items) => items.name === item.name);
+
+    // Check if the item was found in the inventory
+    if (index !== -1) {
+      // Remove the item at the found index
+      this.inventory.splice(index, 1);
+    }
   }
 
   hasItem(item) {
