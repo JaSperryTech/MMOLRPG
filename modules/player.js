@@ -69,23 +69,20 @@ export default class Player {
     this.cols += amount;
   }
 
-  addItem(itemObject) {
+  addItem(item) {
     this.inventory.push({
-      Name: itemObject.Name,
-      Type: itemObject.Type,
-      Attack: itemObject.Attack,
-      Description: itemObject.Description,
-      Value: itemObject.Value,
-      Rarity: itemObject.Rarity,
+      Name: item.Name,
+      Type: item.Type,
+      Attack: item.Attack,
+      Description: item.Description,
+      Value: item.Value,
+      Rarity: item.Rarity,
     });
   }
 
-  addItem(item) {
-    this.inventory.push(item);
-  }
-
-  removeItem(itemName) {
-    this.inventory = this.inventory.filter((item) => item.name !== itemName);
+  removeItem(item) {
+    console.log("Removing item:", item.Name);
+    this.inventory = this.inventory.filter((item) => item.Name !== item.Name);
   }
 
   hasItem(item) {
@@ -119,15 +116,15 @@ export default class Player {
     }
     */
     // Unequip item from current slot if exists
-    if (this.equipment[slot]) {
+    if (this.equipment[slot] !== null && this.equipment[slot] !== undefined) {
       this.unequipItem(this, slot);
     }
 
     // Equip new item
     player.equipment[slot] = item;
     player.damage += item.attack || 0;
-    player.removeItem(item.Name);
-    console.log(`${this.name} equipped ${item.name}`);
+    player.removeItem(item);
+    console.log(`${this} equipped ${item.name}`);
   }
 
   unequipItem(player, slot) {
