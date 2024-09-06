@@ -85,6 +85,7 @@
 
 ## 15. Working Skill Effects
 
+- [ ] Lower player EXP/Higher monster EXP
 - [x] Design a skill effect function
 - [ ] impliment the function
 - [ ] test the function
