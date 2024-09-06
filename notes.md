@@ -68,9 +68,9 @@
 
 ## 12. Fix equip and unequip Functions
 
-- [ ] Design the fix
-- [ ] Implement the fix
-- [ ] Test the fix
+- [x] Design the fix
+- [x] Implement the fix
+- [x] Test the fix
 
 ## 13. Fix Achiement Display on Hover
 

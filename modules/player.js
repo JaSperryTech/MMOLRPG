@@ -98,75 +98,74 @@ export default class Player {
   equipItem(player, item) {
     const slot = item.Type;
 
-    if (!this.hasItem(item)) {
+    // Check if the item is in the player's inventory
+    if (!player.hasItem(item)) {
       console.error(`Item not in inventory: ${item.name}`);
       return;
     }
 
+    // Handle accessories separately since there are two slots
     if (slot === "accessory") {
-      // checks if accessory 1 is empty
+      // Check accessory slots
       if (!player.equipment.accessory1) {
         player.equipment.accessory1 = item;
-      }
-      // checks if accessory 2 is empty
-      else if (!player.equipment.accessory2) {
+      } else if (!player.equipment.accessory2) {
         player.equipment.accessory2 = item;
-      }
-      // alerts player that both accessories slots are occupided
-      else {
-        console.log("Both accessory slots are occupided");
-        alert("Unequip an accessory");
+      } else {
+        console.log("Both accessory slots are occupied");
+        alert("Unequip an accessory to equip this item.");
+        return;
       }
     } else {
-      // Check if the slot exists and the item is in the inventory
-      if (!this.equipment.hasOwnProperty(slot)) {
+      // Check if the equipment slot exists
+      if (!player.equipment.hasOwnProperty(slot)) {
         console.error(`Invalid slot: ${slot}`);
         return;
       }
-      /*
-      if (this.level >= item.levelRequirement) {
-      // Unequip item from current slot if exists
-      if (this.equipment[slot]) {
-        this.unequipItem(this, slot);
+
+      // Check level requirement if applicable (uncomment and adapt this if necessary)
+      // if (player.level < item.levelRequirement) {
+      //     console.log(`Level too low to equip ${item.name}`);
+      //     return;
+      // }
+
+      // Unequip existing item if there is one
+      if (player.equipment[slot]) {
+        player.unequipItem(player, slot);
       }
 
-      // Equip new item
-      this.equipment[slot] = item;
-      this.damage += item.attack || 0;
-      console.log(`${player.name} equipped ${item.name}`);
-      } else {
-      console.log(`Level too low to equip ${item.name}`);
-      }
-      */
-      if (this.equipment[slot] !== null && this.equipment[slot] !== undefined) {
-        this.unequipItem(this, slot);
-      }
-
-      // Equip new item
+      // Equip the new item
       player.equipment[slot] = item;
     }
+
+    // Apply item's effects (e.g., increase damage)
     player.damage += item.attack || 0;
+
+    // Remove the item from the player's inventory
     player.removeItem(item);
-    console.log(`${this} equipped ${item.name}`);
+    console.log(`${player.name} equipped ${item.name}`);
   }
 
   unequipItem(player, slot) {
+    // Get the item from the specified equipment slot
     const item = player.equipment[slot];
 
-    if (!this.equipment[slot]) {
+    // Check if there is an item in the slot
+    if (!item) {
       console.error(`No item to unequip in slot: ${slot}`);
       return;
     }
 
-    if (item) {
-      // Adjust stats when item is unequipped
-      player.damage -= item.attack || 0;
-      player.equipment[slot] = null;
-      player.addItem(item);
-      console.log(`Player unequipped ${item.Name}`);
-    } else {
-      console.log(`No item equipped in the ${slot} slot`);
-    }
+    // Adjust stats when item is unequipped
+    player.damage -= item.attack || 0;
+
+    // Remove the item from the slot
+    player.equipment[slot] = null;
+
+    // Add the item back to the player's inventory
+    player.addItem(item);
+
+    console.log(`${player.name} unequipped ${item.name}`);
   }
 
   rebirth(player) {
