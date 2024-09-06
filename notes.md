@@ -39,8 +39,8 @@
 ## 7. Update Monster Drops
 
 - [x] Review current monster drop mechanics
-- [] Update drop rates and items
-- [] Test changes
+- [x] Update drop rates and items
+- [ ] Test changes
 
 ## 8. Equipment System
 
@@ -62,16 +62,46 @@
 
 ## 11. Fix Boss Spawning on Round 10
 
-- [ ] Design Spawning Boss based on Rounds
+- [x] Design Spawning Boss based on Rounds
 - [ ] Implement Spawning functionality
 - [ ] Test Spawning
 
-## 12. Fix Achiement Display on Hover
+## 12. Fix equip and unequip Functions
+
+- [ ] Design the fix
+- [ ] Implement the fix
+- [ ] Test the fix
+
+## 13. Fix Achiement Display on Hover
 
 - [x] Implement equipment functionality
 - [x] Test equipment system
 
-## 13. Code Management
+## 14. Working Skill Points
+
+- [ ] Design a way to get skill points (from Bosses or leveling up)
+- [ ] Implement the skill point giver
+- [ ] Test the skill point
+
+## 15. Working Skill Effects
+
+- [x] Design a skill effect function
+- [ ] impliment the function
+- [ ] test the function
+
+## 16. Infinate Item Stacking
+
+- [ ] Design the system
+- [ ] impliment the system
+- [ ] test the system
+
+## 17. Over Leveling Rebirth System
+
+- [ ] Design the system so the extra levels aren't wasted
+- [ ] impliment the system
+- [ ] test thensystem
+
+## 18. Code Management
 
 - [ ] Break down Functions
   - [ ] Multiple different UI Functions
@@ -80,13 +110,13 @@
 - [ ] Error Handling
 - [ ] Optimization
 
-## 14. Enhanced Feedback
+## 19. Version Controlling
 
-## 15. Version Controlling
+## 20. Enhanced Feedback
 
-## 16. Add Crafing Module
+## 21. Add Crafing Module
 
-## 17. Add Quest Module
+## 22. Add Quest Module
 
 # Notes
 
@@ -95,7 +125,3 @@
 | **Warrior** (Active) |  Berserker   |   Paladin    |    Guardian    |
 |   **Mage** (Idle)    | Elementalist | Necromancer  |   Enchanter    |
 | **Archer** (Passive) |    Ranger    | Sharpshooter |  Beastmaster   |
-
-go back through equip and unequip item
-fix unequip accessories
-use skill effects

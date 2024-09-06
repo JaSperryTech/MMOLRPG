@@ -140,8 +140,24 @@ export const items = {
     value: 75,
     rarity: "rare",
   },
-  GoblinSpellbook: {
+  GoblinCloak: {
     id: "item-018",
+    name: "Goblin’s Cloak",
+    type: "body",
+    description: "Increases stealth or evasion.",
+    value: 90,
+    rarity: "uncommon",
+  },
+  GoblinRelic: {
+    id: "item-019",
+    name: "Goblin Relic",
+    type: "material",
+    description: "Used in crafting or trading.",
+    value: 50,
+    rarity: "common",
+  },
+  GoblinSpellbook: {
+    id: "item-020",
     name: "Goblin’s Spellbook",
     type: "book",
     description: "Teaches a special upgrade or ability.",
@@ -149,7 +165,7 @@ export const items = {
     rarity: "rare",
   },
   KingGoblinTeeth: {
-    id: "item-019",
+    id: "item-021",
     name: "King Goblin Teeth",
     type: "material",
     description: "Used in high-tier crafting recipes.",
@@ -157,7 +173,7 @@ export const items = {
     rarity: "common",
   },
   KingGoblinDagger: {
-    id: "item-020",
+    id: "item-022",
     name: "King Goblin Dagger",
     type: "weapon",
     attack: 15,
@@ -165,28 +181,12 @@ export const items = {
     value: 30,
     rarity: "common",
   },
-  GoblinRelic: {
-    id: "item-021",
-    name: "Goblin Relic",
-    type: "material",
-    description: "Used in crafting or trading.",
-    value: 50,
-    rarity: "common",
-  },
   KingGoblinCrown: {
-    id: "item-022",
+    id: "item-023",
     name: "King Goblin’s Crown",
     type: "head",
     description: "Provides significant defensive bonuses.",
     value: 180,
-    rarity: "uncommon",
-  },
-  GoblinCloak: {
-    id: "item-023",
-    name: "Goblin’s Cloak",
-    type: "body",
-    description: "Increases stealth or evasion.",
-    value: 90,
     rarity: "uncommon",
   },
   KingGoblinAmulet: {
