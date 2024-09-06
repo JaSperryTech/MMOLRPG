@@ -39,13 +39,8 @@ function getMonsterLevel() {
   const worldBonus =
     world > 1 ? Math.floor((world - 1) * 100 + Math.random() * 100) : 0;
 
-  // Apply difficulty modifier based on player power
-  const difficultyModifier = Math.log1p(playerDamage) / 10;
-
   // Calculate final level
-  const level = Math.round(
-    baseLevel + areaBonus + worldBonus + difficultyModifier
-  );
+  const level = Math.round(baseLevel + areaBonus + worldBonus);
 
   // Track level occurrences
   if (!levelCounts[level]) {

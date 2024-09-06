@@ -18,10 +18,8 @@ export default class Monster {
 
   calculateHealth(level) {
     if (this.isBoss) {
-      // Bosses have a more controlled scaling factor
       return Math.round(10 + (this.baseHealth * level) ** 2 / 5000);
     }
-    // Regular monsters scale with level
     return Math.round(10 + (this.baseHealth * level) ** 2 / 100);
   }
 

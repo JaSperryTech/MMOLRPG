@@ -556,7 +556,6 @@ function handleInvalidWorldOrArea() {
 }
 
 function getMonsterLevel() {
-  // TODO: update MonsterLevel to new graphed version
   const { round, area, world } = player.values;
 
   // Calculate base level based on round
@@ -579,13 +578,8 @@ function getMonsterLevel() {
   const worldBonus =
     world > 1 ? Math.floor((world - 1) * 100 + Math.random() * 100) : 0;
 
-  // Apply difficulty modifier based on player power
-  const difficultyModifier = Math.log1p(player.damage) / 10;
-
   // Calculate final level
-  const level = Math.round(
-    baseLevel + areaBonus + worldBonus // + difficultyModifier
-  );
+  const level = Math.round(baseLevel + areaBonus + worldBonus);
 
   return level;
 }

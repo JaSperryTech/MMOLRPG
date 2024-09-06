@@ -63,8 +63,8 @@
 ## 11. Fix Boss Spawning on Round 10
 
 - [x] Design Spawning Boss based on Rounds
-- [ ] Implement Spawning functionality
-- [ ] Test Spawning
+- [x] Implement Spawning functionality
+- [x] Test Spawning
 
 ## 12. Fix equip and unequip Functions
 
