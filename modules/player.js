@@ -47,7 +47,7 @@ export default class Player {
 
     let need =
       this.rebirths !== 0
-        ? Math.round(BaseEXP * (1.25 * this.rebirths) + BaseEXP)
+        ? Math.round(BaseEXP * (1.05 * this.rebirths) + BaseEXP)
         : BaseEXP;
     return need;
   }
@@ -56,9 +56,13 @@ export default class Player {
     let neededEXP = this.getExperienceToNextLevel();
 
     while (this.experience >= neededEXP) {
-      this.level++;
       this.experience -= neededEXP;
-      this.damage += 1; // Increase damage on level up
+      this.level++;
+      this.damage += 1;
+
+      if (this.level % 10 == 0) {
+        this.skillPoints++;
+      }
 
       // Update experience required for the next level
       neededEXP = this.getExperienceToNextLevel();

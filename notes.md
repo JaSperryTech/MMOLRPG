@@ -79,9 +79,9 @@
 
 ## 14. Working Skill Points
 
-- [ ] Design a way to get skill points (from Bosses or leveling up)
-- [ ] Implement the skill point giver
-- [ ] Test the skill point
+- [x] Design a way to get skill points (from Bosses or leveling up)
+- [x] Implement the skill point giver
+- [x] Test the skill point
 
 ## 15. Working Skill Effects
 
