@@ -97,17 +97,34 @@ export default class Player {
 
   equipItem(player, item) {
     const slot = item.Type;
-    // Check if the slot exists and the item is in the inventory
-    if (!this.equipment.hasOwnProperty(slot)) {
-      console.error(`Invalid slot: ${slot}`);
-      return;
-    }
+
     if (!this.hasItem(item)) {
       console.error(`Item not in inventory: ${item.name}`);
       return;
     }
-    /*
-    if (this.level >= item.levelRequirement) {
+
+    if (slot === "accessory") {
+      // checks if accessory 1 is empty
+      if (!player.equipment.accessory1) {
+        player.equipment.accessory1 = item;
+      }
+      // checks if accessory 2 is empty
+      else if (!player.equipment.accessory2) {
+        player.equipment.accessory2 = item;
+      }
+      // alerts player that both accessories slots are occupided
+      else {
+        console.log("Both accessory slots are occupided");
+        alert("Unequip an accessory");
+      }
+    } else {
+      // Check if the slot exists and the item is in the inventory
+      if (!this.equipment.hasOwnProperty(slot)) {
+        console.error(`Invalid slot: ${slot}`);
+        return;
+      }
+      /*
+      if (this.level >= item.levelRequirement) {
       // Unequip item from current slot if exists
       if (this.equipment[slot]) {
         this.unequipItem(this, slot);
@@ -117,17 +134,17 @@ export default class Player {
       this.equipment[slot] = item;
       this.damage += item.attack || 0;
       console.log(`${player.name} equipped ${item.name}`);
-    } else {
+      } else {
       console.log(`Level too low to equip ${item.name}`);
-    }
-    */
-    // Unequip item from current slot if exists
-    if (this.equipment[slot] !== null && this.equipment[slot] !== undefined) {
-      this.unequipItem(this, slot);
-    }
+      }
+      */
+      if (this.equipment[slot] !== null && this.equipment[slot] !== undefined) {
+        this.unequipItem(this, slot);
+      }
 
-    // Equip new item
-    player.equipment[slot] = item;
+      // Equip new item
+      player.equipment[slot] = item;
+    }
     player.damage += item.attack || 0;
     player.removeItem(item);
     console.log(`${this} equipped ${item.name}`);
@@ -185,20 +202,5 @@ export default class Player {
     // Additive bonus
     const additiveBonus = 5 * this.rebirths;
     player.damage += additiveBonus;
-  }
-
-  updateValues({ round, area, world }) {
-    if (round !== undefined) {
-      this.values.round = round;
-      this.highestValues.round = Math.max(this.highestValues.round, round); // Update highest round
-    }
-    if (area !== undefined) {
-      this.values.area = area;
-      this.highestValues.area = Math.max(this.highestValues.area, area); // Update highest area
-    }
-    if (world !== undefined) {
-      this.values.world = world;
-      this.highestValues.world = Math.max(this.highestValues.world, world); // Update highest world
-    }
   }
 }
