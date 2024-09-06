@@ -40,7 +40,7 @@
 
 - [x] Review current monster drop mechanics
 - [x] Update drop rates and items
-- [ ] Test changes
+- [x] Test changes
 
 ## 8. Equipment System
 
