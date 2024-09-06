@@ -39,6 +39,8 @@ const skillTreeContainer = document.getElementById("skill-tree-container");
 const skillDescriptionElement = document.getElementById("skill-description");
 const unlockedSkillButton = document.getElementById("unlock-skill-button");
 const achievementsListElement = document.getElementById("achievements-grid");
+const sortBy = document.getElementById("sort-select");
+const filterby = document.getElementById("filter-select");
 
 // Start the game
 startGame();
@@ -653,21 +655,12 @@ function setupEventListeners() {
   });
 
   // Use filterAndSortInventory function in filter buttons
-  document.getElementById("filter-all").addEventListener("click", () => {
-    filterAndSortInventory("all");
+  filterby.addEventListener("change", function () {
+    updateList();
   });
 
-  document.getElementById("filter-weapons").addEventListener("click", () => {
-    filterAndSortInventory("weapon");
-  });
-
-  // Use filterAndSortInventory function in sort buttons
-  document.getElementById("sort-name").addEventListener("click", () => {
-    filterAndSortInventory("all", "name");
-  });
-
-  document.getElementById("sort-value").addEventListener("click", () => {
-    filterAndSortInventory("all", "value");
+  sortBy.addEventListener("change", function () {
+    updateList();
   });
 
   document.getElementById("rebirth-button").addEventListener("click", () => {
@@ -679,6 +672,10 @@ function setupEventListeners() {
       console.log("Need to be level 100 or Higher");
     }
   });
+}
+
+function updateList() {
+  filterAndSortInventory(filterby.value, sortBy.value);
 }
 
 // Switch between different sections of the game
