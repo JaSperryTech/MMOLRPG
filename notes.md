@@ -39,22 +39,26 @@
 ## 7. Update Monster Drops
 
 - [x] Review current monster drop mechanics
-- [x] Update drop rates and items
-- [x] Test changes
+- [] Update drop rates and items
+- [] Test changes
 
 ## 8. Equipment System
 
 - [x] Design equipment system
-- [ ] Implement equipment functionality
-- [ ] Test equipment system
+- [x] Implement equipment functionality
+- [x] Test equipment system
 
 ## 9. Update Inventory Sorting
+
+- [x] Design Inventory Sorting system
+- [x] Implement Inventory Sorting functionality
+- [x] Test Inventory Sorting system
 
 ## 10. Hover Item Display System
 
 - [x] Design hover item display system
 - [x] Implement hover functionality
-- [ ] Test hover item display
+- [x] Test hover item display
 
 ## 11. Fix Boss Spawning on Round 10
 
@@ -63,6 +67,9 @@
 - [ ] Test Spawning
 
 ## 12. Fix Achiement Display on Hover
+
+- [x] Implement equipment functionality
+- [x] Test equipment system
 
 ## 13. Code Management
 
@@ -88,3 +95,7 @@
 | **Warrior** (Active) |  Berserker   |   Paladin    |    Guardian    |
 |   **Mage** (Idle)    | Elementalist | Necromancer  |   Enchanter    |
 | **Archer** (Passive) |    Ranger    | Sharpshooter |  Beastmaster   |
+
+go back through equip and unequip item
+fix unequip accessories
+use skill effects

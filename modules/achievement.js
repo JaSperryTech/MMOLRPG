@@ -206,8 +206,6 @@ export default class Achievements {
           achievement.unlocked = true;
           console.log(`Achievement '${achievement.name}' unlocked!`);
         }
-      } else {
-        console.log(`Achievement '${achievement.name}' is already unlocked.`);
       }
     });
 

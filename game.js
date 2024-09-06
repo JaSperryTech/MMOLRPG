@@ -445,11 +445,8 @@ function updateAchievementsList() {
 
       // Append the achievement div to the achievements list element
       achievementsListElement.appendChild(achievementElement);
-
-      console.log(`Achievement '${achievement.name}' displayed in the list.`);
     });
   } else {
-    console.log("No achievements unlocked.");
     achievementsListElement.textContent = "No achievements unlocked.";
   }
 }
