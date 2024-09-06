@@ -32,9 +32,13 @@ const createMonsters = () => {
       },
       experience: 10,
       drops: createDrops([
-        { name: "SlimeGel", chance: 0.5 },
-        { name: "AcidicResidue", chance: 0.3 },
-        { name: "SlimeCore", chance: 0.2 },
+        { name: "SlimeGel", chance: 0.25 },
+        { name: "AcidicResidue", chance: 0.25 },
+        { name: "SlimeCore", chance: 0.25 },
+        { name: "SlimeCrystal", chance: 0.15 },
+        { name: "SlimeScale", chance: 0.07 },
+        { name: "SlimeCharm", chance: 0.02 },
+        { name: "SlimeEssence", chance: 0.01 },
       ]),
     },
     Goblin: {

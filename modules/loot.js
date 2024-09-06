@@ -29,7 +29,7 @@ export const items = {
     id: "item-004",
     name: "Slime Crystal",
     type: "material",
-    description: "Used in high-tier crafting recipes.",
+    description: "Used in low-tier crafting recipes.",
     value: 50,
     rarity: "uncommon",
   },
@@ -62,7 +62,7 @@ export const items = {
     name: "King Slime Crown",
     type: "head",
     description: "Provides a significant boost to defense.",
-    value: 200,
+    value: 50,
     rarity: "common",
   },
   RoyalSlimeArmorPiece: {
@@ -70,7 +70,7 @@ export const items = {
     name: "Royal Slime Armor Piece",
     type: "material",
     description: "Provides high protection.",
-    value: 120,
+    value: 50,
     rarity: "uncommon",
   },
   KingSlimeAmulet: {
@@ -78,7 +78,7 @@ export const items = {
     name: "King Slime’s Amulet",
     type: "accessory",
     description: "Grants significant buffs to strength and resistance.",
-    value: 300,
+    value: 150,
     rarity: "rare",
   },
   SlimeKingScepter: {
@@ -87,7 +87,7 @@ export const items = {
     type: "weapon",
     attack: 50,
     description: "Grants powerful slime-related abilities.",
-    value: 500,
+    value: 250,
     rarity: "rare",
   },
   GoblinTeeth: {
