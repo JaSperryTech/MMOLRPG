@@ -503,7 +503,11 @@ function populateAreaOptions() {
 }
 
 function updateMonster() {
-  const { world: worldIndex, area: areaIndex } = player.values;
+  const {
+    world: worldIndex,
+    area: areaIndex,
+    round: roundIndex,
+  } = player.values;
 
   if (
     !worlds[`World${worldIndex}`] ||
@@ -513,11 +517,20 @@ function updateMonster() {
     return;
   }
 
-  const monstersInArea = worlds[`World${worldIndex}`].Areas[areaIndex].monsters;
-  const randomMonsterName =
-    monstersInArea[Math.floor(Math.random() * monstersInArea.length)];
-  const monsterLevel = getMonsterLevel();
-  currentMonster = new Monster(randomMonsterName, monsterLevel);
+  if (areaIndex % 10 === 0 && roundIndex == 10) {
+    const bossInArea = worlds[`World${worldIndex}`].Areas[areaIndex].boss;
+    const randomBossName =
+      bossInArea[Math.floor(Math.random() * bossInArea.length)];
+    const bossLevel = getMonsterLevel();
+    currentMonster = new Monster(randomBossName, bossLevel);
+  } else {
+    const monstersInArea =
+      worlds[`World${worldIndex}`].Areas[areaIndex].monsters;
+    const randomMonsterName =
+      monstersInArea[Math.floor(Math.random() * monstersInArea.length)];
+    const monsterLevel = getMonsterLevel();
+    currentMonster = new Monster(randomMonsterName, monsterLevel);
+  }
 
   updateMonsterUI();
 }
@@ -543,6 +556,7 @@ function handleInvalidWorldOrArea() {
 }
 
 function getMonsterLevel() {
+  // TODO: update MonsterLevel to new graphed version
   const { round, area, world } = player.values;
 
   // Calculate base level based on round
