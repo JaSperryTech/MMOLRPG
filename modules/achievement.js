@@ -127,10 +127,6 @@ export default class Achievements {
       const achievement = this.achievements[key];
 
       if (!achievement.unlocked) {
-        console.log(
-          `Checking if achievement '${achievement.name}' can be unlocked...`
-        );
-
         // Check for level-based achievements
         if (key === "levelUp5" && player.level >= 5) {
           achievement.unlocked = true;

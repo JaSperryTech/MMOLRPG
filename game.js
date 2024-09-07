@@ -868,8 +868,10 @@ function applyEffect(player, classType, specialization, upgradeName) {
   }
 
   // Apply the effect and mark the upgrade as unlocked
-  if (typeof upgrade.effect === "function") {
-    upgrade.effect(player);
+  if (
+    typeof skills[classType][specialization][upgradeName].effect === "function"
+  ) {
+    skills[classType][specialization][upgradeName].effect(player);
   }
   upgrade.unlocked = true;
 }

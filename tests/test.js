@@ -151,7 +151,7 @@ for (rebirths = 0; rebirths < 10; ) {
   }
 }
 
-console.table(levelCounts, ["level", "count"]);
-console.table(killsPerLevel, ["Kills per Level"]);
-console.table(roundsPerLevel, ["Rounds per Level"]);
+// console.table(levelCounts, ["level", "count"]);
+// console.table(killsPerLevel, ["Kills per Level"]);
+// console.table(roundsPerLevel, ["Rounds per Level"]);
 console.log("Total Kill Count:", totalKillCount); // Display total kill count
