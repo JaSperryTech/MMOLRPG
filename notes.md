@@ -85,16 +85,16 @@
 
 ## 15. Working Skill Effects
 
-- [ ] Lower player EXP/Higher monster EXP
+- [x] Lower player EXP/Higher monster EXP
 - [x] Design a skill effect function
-- [ ] impliment the function
-- [ ] test the function
+- [x] impliment the function
+- [x] test the function
 
 ## 16. Infinate Item Stacking
 
-- [ ] Design the system
-- [ ] impliment the system
-- [ ] test the system
+- [x] Design the system
+- [x] impliment the system
+- [x] test the system
 
 ## 17. Over Leveling Rebirth System
 

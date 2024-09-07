@@ -119,7 +119,7 @@ export const items = {
   GoblinMask: {
     id: "item-015",
     name: "Goblin Mask",
-    type: "helmet",
+    type: "head",
     description: "Provides bonuses to stealth or perception.",
     value: 30,
     rarity: "uncommon",
@@ -127,7 +127,7 @@ export const items = {
   GoblinBelt: {
     id: "item-016",
     name: "Goblin’s Belt",
-    type: "belt",
+    type: "accessory",
     description: "Increases movement speed or evasion.",
     value: 40,
     rarity: "uncommon",
@@ -143,7 +143,7 @@ export const items = {
   GoblinCloak: {
     id: "item-018",
     name: "Goblin’s Cloak",
-    type: "body",
+    type: "chest",
     description: "Increases stealth or evasion.",
     value: 90,
     rarity: "uncommon",

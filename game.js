@@ -261,16 +261,31 @@ function renderInventory(items) {
   items.forEach((item) => {
     const itemElement = document.createElement("div");
     itemElement.classList.add("inventory-item");
-    itemElement.innerHTML = `<p>${item.Name}</p><p>Value: ${item.Value}</p>`;
 
-    // Store all relevant item data
+    // Display the item's name and value
+    itemElement.innerHTML = `
+      <p>${item.Name}</p>
+      <p>Value: ${item.Value}</p>
+    `;
+
+    // Store all relevant item data in dataset
     itemElement.dataset.name = item.Name;
     itemElement.dataset.value = item.Value;
     itemElement.dataset.type = item.Type;
     itemElement.dataset.damage = item.Damage || null;
     itemElement.dataset.description = item.Description;
     itemElement.dataset.rarity = item.Rarity;
+    itemElement.dataset.quantity = item.Quantity;
 
+    // Add quantity circle in the top right corner if quantity is greater than 1
+    if (item.Quantity > 1) {
+      const quantityBadge = document.createElement("div");
+      quantityBadge.classList.add("quantity-badge");
+      quantityBadge.textContent = item.Quantity;
+      itemElement.appendChild(quantityBadge);
+    }
+
+    // Append the item to the inventory grid
     inventoryGrid.appendChild(itemElement);
 
     // Add click effect to show persistent tooltip
@@ -333,7 +348,7 @@ function handleItemClick(event, item, source, slot = null) {
   const tooltip = document.createElement("div");
   tooltip.classList.add("tooltip");
 
-  // Build the tooltip content
+  // Build the tooltip content, including the quantity
   tooltip.innerHTML = `
     <p><strong>${item.Name}</strong></p>
     <p>Type: ${item.Type}</p>
@@ -341,6 +356,7 @@ function handleItemClick(event, item, source, slot = null) {
     <p>Description: ${item.Description}</p>
     <p>Value: ${item.Value}</p>
     <p>Rarity: ${item.Rarity}</p>
+    <p>Quantity: ${item.Quantity}</p> <!-- Display the item quantity -->
     <button class="exit-button">Exit</button>
   `;
 

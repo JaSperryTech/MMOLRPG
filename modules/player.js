@@ -74,43 +74,55 @@ export default class Player {
   }
 
   addItem(item) {
-    this.inventory.push({
-      Name: item.Name,
-      Type: item.Type,
-      Attack: item.Attack,
-      Description: item.Description,
-      Value: item.Value,
-      Rarity: item.Rarity,
-    });
-  }
+    const existingItem = this.inventory.find((i) => i.Name === item.Name);
 
-  removeItem(item) {
-    // Find the index of the first occurrence of the item with the matching name
-    const index = this.inventory.findIndex((items) => items.name === item.name);
-
-    // Check if the item was found in the inventory
-    if (index !== -1) {
-      // Remove the item at the found index
-      this.inventory.splice(index, 1);
+    if (existingItem) {
+      // Item already exists, increment quantity
+      existingItem.Quantity += item.Quantity || 1;
+    } else {
+      // Add the new item with initial quantity
+      this.inventory.push({
+        Name: item.Name,
+        Type: item.Type,
+        Attack: item.Attack,
+        Description: item.Description,
+        Value: item.Value,
+        Rarity: item.Rarity,
+        Quantity: item.Quantity || 1, // Default to 1 if quantity isn't specified
+      });
     }
   }
 
-  hasItem(item) {
-    return this.inventory.some((i) => i.name === item.name);
+  removeItem(item, quantity = 1) {
+    const index = this.inventory.findIndex((i) => i.Name === item.Name);
+
+    if (index !== -1) {
+      if (this.inventory[index].Quantity > quantity) {
+        // Reduce the quantity
+        this.inventory[index].Quantity -= quantity;
+      } else {
+        // Remove the item completely if quantity becomes 0 or less
+        this.inventory.splice(index, 1);
+      }
+    } else {
+      console.error(`Item not found: ${item.Name}`);
+    }
+  }
+
+  hasItem(item, quantity = 1) {
+    const inventoryItem = this.inventory.find((i) => i.Name === item.Name);
+    return inventoryItem && inventoryItem.Quantity >= quantity;
   }
 
   equipItem(player, item) {
     const slot = item.Type;
 
-    // Check if the item is in the player's inventory
     if (!player.hasItem(item)) {
-      console.error(`Item not in inventory: ${item.name}`);
+      console.error(`Item not in inventory: ${item.Name}`);
       return;
     }
 
-    // Handle accessories separately since there are two slots
     if (slot === "accessory") {
-      // Check accessory slots
       if (!player.equipment.accessory1) {
         player.equipment.accessory1 = item;
       } else if (!player.equipment.accessory2) {
@@ -121,55 +133,36 @@ export default class Player {
         return;
       }
     } else {
-      // Check if the equipment slot exists
       if (!player.equipment.hasOwnProperty(slot)) {
         console.error(`Invalid slot: ${slot}`);
         return;
       }
 
-      // Check level requirement if applicable (uncomment and adapt this if necessary)
-      // if (player.level < item.levelRequirement) {
-      //     console.log(`Level too low to equip ${item.name}`);
-      //     return;
-      // }
-
-      // Unequip existing item if there is one
       if (player.equipment[slot]) {
         player.unequipItem(player, slot);
       }
 
-      // Equip the new item
       player.equipment[slot] = item;
     }
 
-    // Apply item's effects (e.g., increase damage)
-    player.damage += item.attack || 0;
-
-    // Remove the item from the player's inventory
+    player.damage += item.Attack || 0;
     player.removeItem(item);
-    console.log(`${player.name} equipped ${item.name}`);
+    console.log(`${player.name} equipped ${item.Name}`);
   }
 
   unequipItem(player, slot) {
-    // Get the item from the specified equipment slot
     const item = player.equipment[slot];
 
-    // Check if there is an item in the slot
     if (!item) {
       console.error(`No item to unequip in slot: ${slot}`);
       return;
     }
 
-    // Adjust stats when item is unequipped
-    player.damage -= item.attack || 0;
-
-    // Remove the item from the slot
+    player.damage -= item.Attack || 0;
     player.equipment[slot] = null;
-
-    // Add the item back to the player's inventory
     player.addItem(item);
 
-    console.log(`${player.name} unequipped ${item.name}`);
+    console.log(`${player.name} unequipped ${item.Name}`);
   }
 
   rebirth(player) {
