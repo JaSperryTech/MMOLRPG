@@ -98,9 +98,9 @@
 
 ## 17. Over Leveling Rebirth System
 
-- [ ] Design the system so the extra levels aren't wasted
-- [ ] impliment the system
-- [ ] test thensystem
+- [x] Design the system so the extra levels aren't wasted
+- [x] impliment the system
+- [x] test the system
 
 ## 18. Code Management
 

@@ -58,7 +58,7 @@ export default class Player {
     while (this.experience >= neededEXP) {
       this.experience -= neededEXP;
       this.level++;
-      this.damage += 1;
+      this.damage += 3;
 
       if (this.level % 10 == 0) {
         this.skillPoints++;
@@ -166,6 +166,8 @@ export default class Player {
   }
 
   rebirth(player) {
+    let remaining = player.level / 100;
+
     // Reset player stats
     player.level = 1;
     player.experience = 0;
@@ -176,7 +178,7 @@ export default class Player {
     // For example, you could keep some form of currency or items
 
     // Increment rebirth count
-    player.rebirths++;
+    player.rebirths += remaining;
 
     // Optionally, apply rebirth bonuses
     player.applyRebirthBonuses(player);
