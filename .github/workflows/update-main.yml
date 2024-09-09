@@ -1,0 +1,25 @@
+name: Create Pull Request
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch full history to ensure PR can be created
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main # The target branch for the pull request
+          branch: auto-pr/test-to-main # Temporary branch name for the PR
+          title: "Automated Pull Request from test to main"
+          body: "This PR was automatically created by the workflow."

@@ -1,5 +1,5 @@
 // game.js
-const currentVersion = "1.1.1";
+const currentVersion = "1.1.2";
 const outdatedVersions = ["1.0.3", "1.1.0"]; // List of outdated versions
 
 window.debug = false;
@@ -321,6 +321,13 @@ function loadPlayerData() {
       console.error("Failed to load player data:", error);
     } else {
       console.warn("An error occurred while loading player data.");
+      let reset = prompt(
+        "There as been an Error with your player data. Would you allow the game to reset you player data? (Input:'yes' or 'no')",
+        "yes"
+      );
+      if ((reset = "yes")) {
+        localStorage.clear();
+      }
     }
   }
 }
@@ -406,8 +413,8 @@ function renderInventory(items) {
     itemElement.dataset.rarity = item.Rarity;
     itemElement.dataset.quantity = item.Quantity;
 
-    // Add quantity circle in the top right corner if quantity is greater than 1
-    if (item.Quantity > 1) {
+    // Add quantity circle in the top right corner if quantity is greater than or equal to 1
+    if (item.Quantity >= 1) {
       const quantityBadge = document.createElement("div");
       quantityBadge.classList.add("quantity-badge");
       quantityBadge.textContent = item.Quantity;

@@ -253,6 +253,24 @@ section h2 {
   box-shadow: 0 2px 6px var(--shadow-color);
 }
 
+/* Badge styling */
+.quantity-badge {
+  position: absolute;
+  top: -10px; /* Adjust based on your design */
+  right: -10px; /* Adjust based on your design */
+  background-color: rgba(15, 179, 190, 0.842);
+  color: rgb(0, 0, 0);
+  border-radius: 50%;
+  width: 24px; /* Adjust size if needed */
+  height: 24px; /* Adjust size if needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px; /* Adjust font size if needed */
+  font-weight: bold;
+  z-index: 10;
+}
+
 #inventory-controls {
   margin-bottom: 10px;
   display: flex;
@@ -603,22 +621,4 @@ section h2 {
 .equipment-item span {
   font-size: 14px;
   color: #666;
-}
-
-/* Circle for quantity badge in the top-right corner */
-.quantity-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: rgba(15, 179, 190, 0.842);
-  color: rgb(0, 0, 0);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 11px;
-  font-weight: bold;
-  z-index: 10; /* Ensure it appears on top of other content */
 }
