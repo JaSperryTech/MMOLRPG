@@ -12,12 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures that all branches and history are fetched
 
       - name: Get the latest commit message
         id: get-commit-message
         run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
-      - name: Check if commit message contains "V:"
+      - name: Check if commit message contains V:
         id: check-message
         run: |
           if [[ "${{ env.COMMIT_MESSAGE }}" == V:* ]]; then
@@ -31,6 +33,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git checkout main
+          git fetch origin  # Fetches all branches from the remote
+          git checkout main  # Ensure that the branch name matches your repository's branch name
           git merge test --no-ff -m "Merge test branch into main"
           git push origin main
