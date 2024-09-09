@@ -13,28 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Fetch full history for PR creation
-
-      - name: Get the latest commit message
-        id: get-commit-message
-        run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
-
-      - name: Check if commit message contains "V:"
-        id: check-message
-        run: |
-          if [[ "${{ env.COMMIT_MESSAGE }}" == V:* ]]; then
-            echo "CREATE_PR=true" >> $GITHUB_ENV
-          else
-            echo "CREATE_PR=false" >> $GITHUB_ENV
-          fi
+          fetch-depth: 0 # Fetch full history to ensure PR can be created
 
       - name: Create Pull Request
-        if: env.CREATE_PR == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: main # Destination branch
-          head: test # Source branch
-          title: "Automated Pull Request: Merge test into main"
-          body: "This pull request was created automatically by the CI pipeline."
-          branch: auto-pr/test-to-main # The name of the PR branch
+          base: main # The target branch for the pull request
+          head: test # The source branch for the pull request
+          title: "Automated Pull Request from test to main"
+          body: "This PR was automatically created by the workflow."
+          branch: auto-pr/test-to-main # Temporary branch name for the PR
