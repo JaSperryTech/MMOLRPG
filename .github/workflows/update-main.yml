@@ -20,7 +20,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main # The target branch for the pull request
-          head: test # The source branch for the pull request
+          branch: auto-pr/test-to-main # Temporary branch name for the PR
           title: "Automated Pull Request from test to main"
           body: "This PR was automatically created by the workflow."
-          branch: auto-pr/test-to-main # Temporary branch name for the PR
