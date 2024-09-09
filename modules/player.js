@@ -7,7 +7,7 @@ export default class Player {
     this.class = null;
     this.cols = 0;
     this.damage = 1;
-    this.rebirths = 0;
+    this.rebirths = 0.0;
     this.skillPoints = 0;
     this.inventory = [];
     this.equipment = {
@@ -58,9 +58,9 @@ export default class Player {
     while (this.experience >= neededEXP) {
       this.experience -= neededEXP;
       this.level++;
-      this.damage += 3;
+      this.damage = Math.floor((this.damage + 3) * 100) / 100; // Ensure damage is rounded to the nearest hundredth
 
-      if (this.level % 10 == 0) {
+      if (this.level % 10 === 0) {
         this.skillPoints++;
       }
 
@@ -193,12 +193,15 @@ export default class Player {
   }
 
   applyRebirthBonuses(player) {
-    // Multiplicative bonus
+    // Calculate and apply multiplicative bonus
     const damageMultiplier = 1 + 0.01 * this.rebirths;
-    player.damage = Math.floor(this.damage * damageMultiplier);
+    player.damage = Math.floor(this.damage * damageMultiplier * 100) / 100; // Round to the nearest hundredth
 
-    // Additive bonus
-    const additiveBonus = 5 * this.rebirths;
+    // Calculate and apply additive bonus
+    const additiveBonus = Math.round(5 * this.rebirths * 100) / 100; // Round to the nearest hundredth
     player.damage += additiveBonus;
+
+    // Ensure damage is at least 1
+    player.damage = Math.max(1, player.damage);
   }
 }

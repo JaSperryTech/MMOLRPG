@@ -1,6 +1,6 @@
 // game.js
-const currentVersion = "1.1.0";
-const outdatedVersions = ["1.0.3"]; // List of outdated versions
+const currentVersion = "1.1.1";
+const outdatedVersions = ["1.0.3", "1.1.0"]; // List of outdated versions
 
 window.debug = false;
 
@@ -272,11 +272,20 @@ function loadPlayerData() {
     player.level = parseInt(playerData.level, 10) || player.level;
     player.experience =
       parseInt(playerData.experience, 10) || player.experience;
-    player.damage = parseInt(playerData.damage, 10) || player.damage;
+
+    // Parse and round floating-point values to 2 decimal places
+    player.damage = parseFloat(playerData.damage) || player.damage;
+    player.damage = Math.round(player.damage * 100) / 100; // Round to 2 decimal places
+
     player.inventory = JSON.parse(playerData.inventory || "[]");
     player.equipment = JSON.parse(playerData.equipment || "[]");
-    player.rebirths = parseInt(playerData.rebirths, 10) || player.rebirths;
-    player.cols = parseInt(playerData.cols, 10) || player.cols;
+
+    player.rebirths = parseFloat(playerData.rebirths) || player.rebirths;
+    player.rebirths = Math.round(player.rebirths * 100) / 100; // Round to 2 decimal places
+
+    player.cols = parseFloat(playerData.cols) || player.cols;
+    player.cols = Math.round(player.cols * 100) / 100; // Round to 2 decimal places
+
     player.values = JSON.parse(playerData.values || "[]");
     player.highestValues = JSON.parse(playerData.highestValues || "[]");
     player.skillPoints =
@@ -783,7 +792,7 @@ function setupEventListeners() {
       );
       player.skillPoints -= selectedSkill.cost;
 
-      updateUI();
+      updatePlayerStatsUI();
       savePlayerData();
     } else {
       alert("Not enough skill points or prerequisites not met.");
@@ -802,7 +811,10 @@ function setupEventListeners() {
   document.getElementById("rebirth-button").addEventListener("click", () => {
     if (player.level >= 100) {
       player.rebirth(player);
-      updateUI();
+      updatePlayerStatsUI();
+      updateGameProgression();
+      updateWorldAndAreaSelection();
+      updateMonster();
       savePlayerData();
     } else {
       console.log("Need to be level 100 or Higher");
@@ -816,6 +828,15 @@ function switchSection(section) {
   document.querySelectorAll(".game-section").forEach((el) => {
     el.classList.add("hidden");
   });
+
+  if (section == "equipment") {
+    renderEquipment(player.equipment);
+  } else if (section == "inventoryB") {
+    renderInventory(player.inventory);
+  } else if (section == "achievements") {
+    achievements.checkAchievements(player);
+    updateAchievementsList();
+  }
 
   // Show the selected section
   document.getElementById(section).classList.remove("hidden");
@@ -832,8 +853,6 @@ function attackMonster() {
     const lootSystem = new Loot(player);
     lootSystem.processLoot(loot);
     updateGameProgression();
-    achievements.checkAchievements(player);
-    updateAchievementsList();
     savePlayerData();
     updateMonster(); // Spawn a new monster
   }

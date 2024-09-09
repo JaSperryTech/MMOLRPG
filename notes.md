@@ -111,7 +111,25 @@
 - [x] Error Handling
 - [x] Optimization
 
-## 19. Version Controlling
+## 19. Fix Rebirths
+
+## 19. Recenter item count
+
+## 20. Make inventory and equipment update on monster death
+
+## 20. Update Error Handling
+
+## 21. window.debug = true download console.log on exit
+
+## 22. if player data wiped then notify player
+
+## 23. Update PlayerData instead of wipe on new version
+
+## 24. Offline Income
+
+## 25. Village Area
+
+## 26. Shops
 
 ## 20. Enhanced Feedback
 

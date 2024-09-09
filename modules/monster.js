@@ -34,6 +34,7 @@ export default class Monster {
       this.health = 0;
       return true; // Monster is dead
     }
+    this.health = Math.round(this.health * 100) / 100; // Round to the nearest hundredth
     return false;
   }
 
