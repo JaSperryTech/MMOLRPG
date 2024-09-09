@@ -321,6 +321,13 @@ function loadPlayerData() {
       console.error("Failed to load player data:", error);
     } else {
       console.warn("An error occurred while loading player data.");
+      let reset = prompt(
+        "There as been an Error with your player data. Would you allow the game to reset you player data? (Input:'yes' or 'no')",
+        "yes"
+      );
+      if ((reset = "yes")) {
+        localStorage.clear();
+      }
     }
   }
 }
