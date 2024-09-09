@@ -104,12 +104,12 @@
 
 ## 18. Code Management
 
-- [ ] Break down Functions
-  - [ ] Multiple different UI Functions
-  - [ ] Multiple different Event Handles
-- [ ] Global Debug System
-- [ ] Error Handling
-- [ ] Optimization
+- [x] Break down Functions
+  - [x] Multiple different UI Functions
+  - [x] Multiple different Event Handles
+- [x] Global Debug System
+- [x] Error Handling
+- [x] Optimization
 
 ## 19. Version Controlling
 

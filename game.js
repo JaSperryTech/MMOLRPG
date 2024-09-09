@@ -2,6 +2,8 @@
 const currentVersion = "1.0.3";
 const outdatedVersions = []; // List of outdated versions
 
+window.debug = false;
+
 import Player from "./modules/player.js";
 import Monster from "./modules/monster.js";
 import Loot from "./modules/loot.js";
@@ -46,31 +48,95 @@ const filterby = document.getElementById("filter-select");
 startGame();
 
 function startGame() {
-  loadPlayerData(); // Load saved data
+  try {
+    if (window.debug) {
+      console.log("Starting the game...");
+    }
 
-  // Update area options based on current world and progress
-  populateWorldOptions();
-  populateAreaOptions();
-  updateMonster();
-  setupEventListeners();
-  updateUI();
+    loadPlayerData(); // Load saved data
+    renderInventory(player.inventory);
+    renderEquipment(player.equipment);
+    updateGameProgression();
+    updateAchievementsList();
+    populateWorldOptions();
+    populateAreaOptions();
+    updateMonster();
+    updatePlayerStatsUI();
+    setupEventListeners();
+
+    if (window.debug) {
+      console.log("Game started successfully.");
+    }
+  } catch (error) {
+    if (window.debug) {
+      console.error("An error occurred while starting the game:", error);
+    } else {
+      // Optionally, show a generic error message to users
+      console.warn("An error occurred. Please try again later.");
+    }
+  }
 }
 
 function savePlayerData() {
   try {
+    localStorage.setItem("playerDebug", window.debug);
+    if (window.debug) {
+      console.log("Saved player debug option:", window.debug);
+    }
+
+    // Separate storage operations with debugging and error handling
     localStorage.setItem("playerVersion", player.version);
+    if (window.debug) {
+      console.log("Saved player version:", player.version);
+    }
+
     localStorage.setItem("playerRebirths", player.rebirths);
+    if (window.debug) {
+      console.log("Saved player rebirths:", player.rebirths);
+    }
+
     localStorage.setItem("playerLevel", player.level);
+    if (window.debug) {
+      console.log("Saved player level:", player.level);
+    }
+
     localStorage.setItem("playerExperience", player.experience);
+    if (window.debug) {
+      console.log("Saved player experience:", player.experience);
+    }
+
     localStorage.setItem("playerClass", player.class);
+    if (window.debug) {
+      console.log("Saved player class:", player.class);
+    }
+
     localStorage.setItem("playerCols", player.cols);
+    if (window.debug) {
+      console.log("Saved player cols:", player.cols);
+    }
+
     localStorage.setItem("playerDamage", player.damage);
+    if (window.debug) {
+      console.log("Saved player damage:", player.damage);
+    }
+
     localStorage.setItem("playerSkillPoints", player.skillPoints);
+    if (window.debug) {
+      console.log("Saved player skill points:", player.skillPoints);
+    }
+
     localStorage.setItem("playerValues", JSON.stringify(player.values));
+    if (window.debug) {
+      console.log("Saved player values:", player.values);
+    }
+
     localStorage.setItem(
       "playerHighestValues",
       JSON.stringify(player.highestValues)
     );
+    if (window.debug) {
+      console.log("Saved player highest values:", player.highestValues);
+    }
 
     // Filter out unlocked achievements
     const unlockedAchievements = Object.entries(
@@ -79,138 +145,204 @@ function savePlayerData() {
       acc[key] = achievement;
       return acc;
     }, {});
-
     localStorage.setItem(
       "playerAchievements",
       JSON.stringify(unlockedAchievements)
     );
+    if (window.debug) {
+      console.log("Saved player achievements:", unlockedAchievements);
+    }
 
     localStorage.setItem("playerSkills", JSON.stringify(playerSkills));
+    if (window.debug) {
+      console.log("Saved player skills:", playerSkills);
+    }
 
     localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
+    if (window.debug) {
+      console.log("Saved player inventory:", player.inventory);
+    }
+
     localStorage.setItem("playerEquipment", JSON.stringify(player.equipment));
+    if (window.debug) {
+      console.log("Saved player equipment:", player.equipment);
+    }
+
+    if (window.debug) {
+      console.log("All player data saved successfully.");
+    }
   } catch (error) {
-    console.error("Failed to save player data:", error);
+    if (window.debug) {
+      console.error("Failed to save player data:", error);
+    } else {
+      console.warn("An error occurred while saving player data.");
+    }
   }
 }
 
 function initializeAchievements() {
-  const defaultAchievements = achievements.getDefaultAchievements();
+  try {
+    const defaultAchievements = achievements.getDefaultAchievements();
 
-  Object.keys(defaultAchievements).forEach((key) => {
-    if (!achievements.achievements[key]) {
-      achievements.achievements[key] = defaultAchievements[key];
+    if (window.debug) {
+      console.log("Initializing achievements...");
     }
-  });
+
+    // Merge default achievements with existing achievements
+    Object.keys(defaultAchievements).forEach((key) => {
+      if (!achievements.achievements[key]) {
+        achievements.achievements[key] = defaultAchievements[key];
+        if (window.debug) {
+          console.log(`Added default achievement: ${key}`);
+        }
+      }
+    });
+
+    if (window.debug) {
+      console.log("Achievements initialization complete.");
+    }
+  } catch (error) {
+    if (window.debug) {
+      console.error("Failed to initialize achievements:", error);
+    } else {
+      console.warn("An error occurred while initializing achievements.");
+    }
+  }
 }
 
-// Initialize skills properly
 function initializeSkills() {
   try {
-    playerSkills = JSON.parse(JSON.stringify(skills)); // Ensure cloning is done correctly
-    console.log(playerSkills);
+    // Clone skills object to avoid mutating the original
+    playerSkills = JSON.parse(JSON.stringify(skills));
+
+    // Debugging information
+    if (window.debug) {
+      console.log("Skills initialized:", playerSkills);
+    }
   } catch (error) {
-    console.error("Failed to clone skills:", error);
+    if (window.debug) {
+      console.error("Failed to clone skills:", error);
+    } else {
+      console.warn("An error occurred while initializing skills.");
+    }
   }
 }
 
 function loadPlayerData() {
   try {
-    const version = localStorage.getItem("playerVersion");
-    const rebirths = localStorage.getItem("playerRebirths");
-    const level = localStorage.getItem("playerLevel");
-    const experience = localStorage.getItem("playerExperience");
-    const playerClass = localStorage.getItem("playerClass");
-    const cols = localStorage.getItem("playerCols");
-    const damage = localStorage.getItem("playerDamage");
-    const skillPoints = localStorage.getItem("playerSkillPoints");
-    const values = localStorage.getItem("playerValues");
-    const highestValues = localStorage.getItem("playerHighestValues");
-    const achievementsData = localStorage.getItem("playerAchievements");
-    const unlockedSkills = localStorage.getItem("playerSkills");
-    const inventory = localStorage.getItem("playerInventory");
-    const equipment = localStorage.getItem("playerEquipment");
-
-    if (!version || outdatedVersions.includes(version)) {
-      localStorage.clear();
-      savePlayerData();
+    // Read debug setting from localStorage
+    const debug = localStorage.getItem("playerDebug") === "true";
+    if (debug) {
+      window.debug = true;
     }
 
-    player = new Player(currentVersion); // Ensure player is initialized with current version
-    player.version = version || currentVersion;
-    player.level = level ? parseInt(level, 10) : player.level;
-    player.experience = experience
-      ? parseInt(experience, 10)
-      : player.experience;
-    player.damage = damage ? parseInt(damage, 10) : player.damage;
-    player.inventory = inventory ? JSON.parse(inventory) : [];
-    player.equipment = equipment ? JSON.parse(equipment) : [];
-    player.rebirths = rebirths ? parseInt(rebirths, 10) : player.rebirths;
-    player.cols = cols ? parseInt(cols, 10) : player.cols;
-    player.values = values ? JSON.parse(values) : [];
-    player.highestValues = highestValues ? JSON.parse(highestValues) : [];
+    // Retrieve all player data from localStorage
+    const playerData = {
+      version: localStorage.getItem("playerVersion"),
+      rebirths: localStorage.getItem("playerRebirths"),
+      level: localStorage.getItem("playerLevel"),
+      experience: localStorage.getItem("playerExperience"),
+      class: localStorage.getItem("playerClass"),
+      cols: localStorage.getItem("playerCols"),
+      damage: localStorage.getItem("playerDamage"),
+      skillPoints: localStorage.getItem("playerSkillPoints"),
+      values: localStorage.getItem("playerValues"),
+      highestValues: localStorage.getItem("playerHighestValues"),
+      achievements: localStorage.getItem("playerAchievements"),
+      skills: localStorage.getItem("playerSkills"),
+      inventory: localStorage.getItem("playerInventory"),
+      equipment: localStorage.getItem("playerEquipment"),
+    };
 
-    if (achievementsData) {
-      const parsedAchievements = JSON.parse(achievementsData);
-      if (Object.keys(parsedAchievements).length > 0) {
-        achievements.achievements = parsedAchievements;
-      } else {
-        initializeAchievements();
+    // Handle outdated versions and reset if needed
+    if (!playerData.version || outdatedVersions.includes(playerData.version)) {
+      if (window.debug) {
+        console.log(
+          "Outdated or missing version detected. Clearing localStorage."
+        );
+      }
+      localStorage.clear();
+      savePlayerData(); // Save default data after clearing
+      return; // Exit early after reset
+    }
+
+    // Initialize player with current version
+    player = new Player(currentVersion);
+    player.version = playerData.version || currentVersion;
+    player.level = parseInt(playerData.level, 10) || player.level;
+    player.experience =
+      parseInt(playerData.experience, 10) || player.experience;
+    player.damage = parseInt(playerData.damage, 10) || player.damage;
+    player.inventory = JSON.parse(playerData.inventory || "[]");
+    player.equipment = JSON.parse(playerData.equipment || "[]");
+    player.rebirths = parseInt(playerData.rebirths, 10) || player.rebirths;
+    player.cols = parseInt(playerData.cols, 10) || player.cols;
+    player.values = JSON.parse(playerData.values || "[]");
+    player.highestValues = JSON.parse(playerData.highestValues || "[]");
+    player.skillPoints =
+      parseInt(playerData.skillPoints, 10) || player.skillPoints;
+    player.class = playerData.class || player.class;
+
+    // Handle achievements and skills
+    achievements.achievements = playerData.achievements
+      ? JSON.parse(playerData.achievements)
+      : initializeAchievements();
+    playerSkills = playerData.skills
+      ? JSON.parse(playerData.skills)
+      : initializeSkills();
+
+    // Handle class assignment and UI updates
+    const classSelectionElement = document.getElementById("chooseClass");
+    const skillTreeElement = document.getElementById("skilltreeContainer");
+
+    if (player.class === "null" || !playerData.class) {
+      classSelectionElement.classList.remove("hidden");
+      if (window.debug) {
+        console.log("Class selection is visible.");
       }
     } else {
-      initializeAchievements();
-    }
-
-    if (unlockedSkills) {
-      playerSkills = JSON.parse(unlockedSkills);
-    } else {
-      initializeSkills();
-    }
-
-    player.skillPoints = skillPoints
-      ? parseInt(skillPoints, 10)
-      : player.skillPoints;
-    player.class = playerClass || player.class; // Handle class assignment
-
-    // Explicitly check if player.class is null or doesn't match playerClass
-    if (player.class === "null" && playerClass === "null") {
-      // Display class selection screen
-      const classSelectionElement = document.getElementById("chooseClass");
-      classSelectionElement.classList.remove("hidden");
-    } else if (player.class === playerClass) {
-      const skillTreeElement = document.getElementById("skilltreeContainer");
       skillTreeElement.classList.remove("hidden");
-
       generateSkillTree();
-    } else {
-      const classSelectionElement = document.getElementById("chooseClass");
-      classSelectionElement.classList.remove("hidden");
+      if (window.debug) {
+        console.log("Skill tree is visible and generated.");
+      }
     }
   } catch (error) {
-    console.error("Failed to load player data:", error);
+    if (window.debug) {
+      console.error("Failed to load player data:", error);
+    } else {
+      console.warn("An error occurred while loading player data.");
+    }
   }
 }
 
-// Update the UI with dynamic area options based on player's progress
-function updateUI() {
-  updatePlayerStatsUI();
-  updateMonsterUI();
-  updateInventoryDisplay(player);
-  updateEquipmentDisplay(player);
-  achievements.checkAchievements(player);
-  updateAchievementsList();
-  updateWorldAndAreaSelection();
-
-  updateProgressBar(player.level);
-}
-
 function updateTextContent(element, text) {
-  if (element && text !== undefined) {
-    element.textContent = text;
+  try {
+    if (window.debug) {
+      console.log("Updating text content:", { element, text });
+    }
+
+    if (element && text !== undefined) {
+      element.textContent = text;
+    } else {
+      if (window.debug) {
+        console.warn("Invalid parameters for updateTextContent:", {
+          element,
+          text,
+        });
+      }
+    }
+  } catch (error) {
+    if (window.debug) {
+      console.error("Failed to update text content:", error);
+    } else {
+      console.warn("An error occurred while updating text content.");
+    }
   }
 }
 
 function updatePlayerStatsUI() {
+  const progressBarFill = document.getElementById("progress-bar-fill");
   const stats = {
     playerLevelElement: player.level,
     playerExperienceElement: player.experience,
@@ -224,11 +356,7 @@ function updatePlayerStatsUI() {
   for (const [element, value] of Object.entries(stats)) {
     updateTextContent(document.getElementById(element), value);
   }
-}
-
-function updateProgressBar(value) {
-  const progressBarFill = document.getElementById("progress-bar-fill");
-  progressBarFill.style.width = `${value}%`;
+  progressBarFill.style.width = `${player.level}%`;
 }
 
 function updateMonsterUI() {
@@ -243,14 +371,6 @@ function updateMonsterUI() {
   monsterHealthElement.textContent = currentMonster.health;
   monsterMaxHealthElement.textContent = currentMonster.maxhealth;
   monsterLevelElement.textContent = currentMonster.level;
-}
-
-function updateInventoryDisplay(player) {
-  renderInventory(player.inventory);
-}
-
-function updateEquipmentDisplay(player) {
-  renderEquipment(player.equipment);
 }
 
 // Function to render the inventory
@@ -380,8 +500,8 @@ function handleItemClick(event, item, source, slot = null) {
       equipButton.addEventListener("click", () => {
         player.equipItem(player, item); // Equip the item
         tooltip.remove(); // Remove tooltip after equipping
-        updateEquipmentDisplay(player); // Update the equipment display
-        updateInventoryDisplay(player); // Update the inventory display
+        renderEquipment(player.equipment); // Update the equipment display
+        renderInventory(player.inventory); // Update the inventory display
       });
       tooltip.appendChild(equipButton);
     } else if (source === "equipment" && slot) {
@@ -392,8 +512,8 @@ function handleItemClick(event, item, source, slot = null) {
       unequipButton.addEventListener("click", () => {
         player.unequipItem(player, slot); // Unequip the item
         tooltip.remove(); // Remove tooltip after unequipping
-        updateEquipmentDisplay(player); // Update the equipment display
-        updateInventoryDisplay(player); // Update the inventory display
+        renderEquipment(player.equipment); // Update the equipment display
+        renderInventory(player.inventory); // Update the inventory display
       });
       tooltip.appendChild(unequipButton);
     }
@@ -525,48 +645,42 @@ function updateMonster() {
     round: roundIndex,
   } = player.values;
 
-  if (
-    !worlds[`World${worldIndex}`] ||
-    !worlds[`World${worldIndex}`].Areas[areaIndex]
-  ) {
-    handleInvalidWorldOrArea();
-    return;
-  }
+  const world = worlds[`World${worldIndex}`];
+  const area = world?.Areas[areaIndex];
 
-  if (areaIndex % 10 === 0 && roundIndex == 10) {
-    const bossInArea = worlds[`World${worldIndex}`].Areas[areaIndex].boss;
-    const randomBossName =
-      bossInArea[Math.floor(Math.random() * bossInArea.length)];
-    const bossLevel = getMonsterLevel();
-    currentMonster = new Monster(randomBossName, bossLevel);
-  } else {
-    const monstersInArea =
-      worlds[`World${worldIndex}`].Areas[areaIndex].monsters;
+  if (!world || !area) {
+    // Handle invalid world or area and update currentMonster
+    player.values.area = Math.max(player.values.area - 1, 0);
+    const newAreaIndex = player.values.area;
+    const newWorldIndex = player.values.world;
+    const newMonstersInArea =
+      worlds[`World${newWorldIndex}`]?.Areas[newAreaIndex]?.monsters;
+
+    if (!newMonstersInArea) {
+      console.error(`Adjusted area still invalid.`);
+      return;
+    }
+
     const randomMonsterName =
-      monstersInArea[Math.floor(Math.random() * monstersInArea.length)];
+      newMonstersInArea[Math.floor(Math.random() * newMonstersInArea.length)];
     const monsterLevel = getMonsterLevel();
     currentMonster = new Monster(randomMonsterName, monsterLevel);
+  } else {
+    // Handle valid world and area
+    if (areaIndex % 10 === 0 && roundIndex === 10) {
+      const bossInArea = area.boss;
+      const randomBossName =
+        bossInArea[Math.floor(Math.random() * bossInArea.length)];
+      const bossLevel = getMonsterLevel();
+      currentMonster = new Monster(randomBossName, bossLevel);
+    } else {
+      const monstersInArea = area.monsters;
+      const randomMonsterName =
+        monstersInArea[Math.floor(Math.random() * monstersInArea.length)];
+      const monsterLevel = getMonsterLevel();
+      currentMonster = new Monster(randomMonsterName, monsterLevel);
+    }
   }
-
-  updateMonsterUI();
-}
-
-function handleInvalidWorldOrArea() {
-  player.values.area = Math.max(player.values.area - 1, 0);
-  const newAreaIndex = player.values.area;
-  const newWorldIndex = player.values.world;
-  const monstersInArea =
-    worlds[`World${newWorldIndex}`].Areas[newAreaIndex]?.monsters;
-
-  if (!monstersInArea) {
-    console.error(`Adjusted area still invalid.`);
-    return;
-  }
-
-  const randomMonsterName =
-    monstersInArea[Math.floor(Math.random() * monstersInArea.length)];
-  const monsterLevel = getMonsterLevel();
-  currentMonster = new Monster(randomMonsterName, monsterLevel);
 
   updateMonsterUI();
 }
@@ -626,7 +740,8 @@ function setupEventListeners() {
       player.values.world = selectedWorld;
       player.values.area = selectedArea;
       player.values.round = 0;
-      updateUI(); // Update UI after selection
+      updateGameProgression();
+      updatePlayerStatsUI();
       updateMonster(); // Spawn new monster based on selection
     } else {
       alert("Invalid world or area selection. Please choose again.");
@@ -677,11 +792,11 @@ function setupEventListeners() {
 
   // Use filterAndSortInventory function in filter buttons
   filterby.addEventListener("change", function () {
-    updateList();
+    filterAndSortInventory(filterby.value, sortBy.value);
   });
 
   sortBy.addEventListener("change", function () {
-    updateList();
+    filterAndSortInventory(filterby.value, sortBy.value);
   });
 
   document.getElementById("rebirth-button").addEventListener("click", () => {
@@ -693,10 +808,6 @@ function setupEventListeners() {
       console.log("Need to be level 100 or Higher");
     }
   });
-}
-
-function updateList() {
-  filterAndSortInventory(filterby.value, sortBy.value);
 }
 
 // Switch between different sections of the game
@@ -711,35 +822,22 @@ function switchSection(section) {
 }
 
 function attackMonster() {
-  updateMonsterUI();
+  // Attack the monster and check if it's dead
+  const isDead = currentMonster.takeDamage(player.damage);
 
-  // Attack the monster
-  const isDead = attackMonsterLogic();
+  updateMonsterUI();
 
   if (isDead) {
-    handleMonsterDeath();
-    updateMonster(); // Spawn new monster
-  } else {
-    updatePlayerStatsUI(); // Update player stats if the monster is not dead
+    const loot = currentMonster.getLoot();
+    const lootSystem = new Loot(player);
+    lootSystem.processLoot(loot);
+    updateGameProgression();
+    achievements.checkAchievements(player);
+    updateAchievementsList();
+    savePlayerData();
+    updateMonster(); // Spawn a new monster
   }
-}
-
-function attackMonsterLogic() {
-  if (!currentMonster) return false;
-
-  const isDead = currentMonster.takeDamage(player.damage);
-  updateMonsterUI();
-  return isDead;
-}
-
-function handleMonsterDeath() {
-  const loot = currentMonster.getLoot();
-  const lootSystem = new Loot(player);
-  lootSystem.processLoot(loot);
-
-  updateGameProgression();
-  updateUI(); // Ensure UI is updated
-  savePlayerData();
+  updatePlayerStatsUI();
 }
 
 function updateGameProgression() {
@@ -770,8 +868,7 @@ function updateGameProgression() {
     player.values.world
   );
 
-  // Update the UI elements
-  updateUI();
+  updateWorldAndAreaSelection();
 }
 
 function selectClass(className) {
@@ -854,10 +951,6 @@ function generateSkillTree() {
 }
 
 function canUnlock(player, classType, specialization, upgradeName) {
-  console.log(
-    `Attempting to unlock skill: ${upgradeName} in ${classType} - ${specialization}`
-  );
-
   const upgrade = playerSkills[classType]?.[specialization]?.[upgradeName];
   if (!upgrade) {
     console.error(
@@ -871,10 +964,6 @@ function canUnlock(player, classType, specialization, upgradeName) {
 }
 
 function applyEffect(player, classType, specialization, upgradeName) {
-  console.log(
-    `Applying effect for skill: ${upgradeName} in ${classType} - ${specialization}`
-  );
-
   const upgrade = playerSkills[classType]?.[specialization]?.[upgradeName];
   if (!upgrade) {
     console.error(
