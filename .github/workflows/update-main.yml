@@ -1,4 +1,4 @@
-name: Update Main Branch
+name: Create Pull Request
 
 on:
   push:
@@ -6,34 +6,35 @@ on:
       - test
 
 jobs:
-  update-main:
+  create-pull-request:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Ensures that all branches and history are fetched
+          fetch-depth: 0  # Fetch full history for PR creation
 
       - name: Get the latest commit message
         id: get-commit-message
         run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
-      - name: Check if commit message contains "V:"
+      - name: Check if commit message contains V:
         id: check-message
         run: |
           if [[ "${{ env.COMMIT_MESSAGE }}" == V:* ]]; then
-            echo "MERGE=true" >> $GITHUB_ENV
+            echo "CREATE_PR=true" >> $GITHUB_ENV
           else
-            echo "MERGE=false" >> $GITHUB_ENV
+            echo "CREATE_PR=false" >> $GITHUB_ENV
           fi
 
-      - name: Merge test branch to main
-        if: env.MERGE == 'true'
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git fetch origin  # Fetches all branches from the remote
-          git checkout main  # Ensure that the branch name matches your repository's branch name
-          git merge test --no-ff -m "Merge test branch into main"
-          git push origin main
+      - name: Create Pull Request
+        if: env.CREATE_PR == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main  # Destination branch
+          head: test  # Source branch
+          title: "Automated Pull Request: Merge test into main"
+          body: "This pull request was created automatically by the CI pipeline."
+          branch: auto-pr/test-to-main  # The name of the PR branch
