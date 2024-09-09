@@ -1,6 +1,6 @@
 // game.js
-const currentVersion = "1.0.3";
-const outdatedVersions = []; // List of outdated versions
+const currentVersion = "1.1.0";
+const outdatedVersions = ["1.0.3"]; // List of outdated versions
 
 window.debug = false;
 
