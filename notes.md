@@ -113,29 +113,30 @@
 
 ## 19. Fix Rebirths
 
-## 19. Recenter item count
+- [x] impliment the fix
+- [x] test the fix
 
-## 20. Make inventory and equipment update on monster death
+## 20. Recenter item count
 
-## 20. Update Error Handling
+## 21. Update Error Handling
 
-## 21. window.debug = true download console.log on exit
+## 22. window.debug = true download console.log on exit
 
-## 22. if player data wiped then notify player
+## 23. if player data wiped then notify player
 
-## 23. Update PlayerData instead of wipe on new version
+## 24. Update PlayerData instead of wipe on new version
 
-## 24. Offline Income
+## 25. Offline Income
 
-## 25. Village Area
+## 26. Village Area
 
-## 26. Shops
+## 27. Shops
 
-## 20. Enhanced Feedback
+## 28. Enhanced Feedback
 
-## 21. Add Crafing Module
+## 29. Add Crafing Module
 
-## 22. Add Quest Module
+## 30. Add Quest Module
 
 # Notes
 
