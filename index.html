@@ -27,6 +27,7 @@
         <button id="equipment-button">Equipment</button>
         <button id="rebirths-button">Rebirths</button>
         <button id="achievements-button">Achievements</button>
+        <button id="settings-button">Settings</button>
       </aside>
       <main id="main-content">
         <section id="main" class="game-section">
@@ -167,6 +168,20 @@
           <h1>Clicker Looter Monster Game</h1>
           <h2>Achievements</h2>
           <div id="achievements-grid" class="grid-container"></div>
+        </section>
+        <section id="settings" class="game-section hidden">
+          <h1>Settings</h1>
+          <div id="settings-container">
+            <h2>Audio Settings</h2>
+            <label for="music-volume">Music Volume:</label>
+            <input type="range" id="music-volume" name="music-volume" min="0" max="100" value="50" />
+
+            <label for="effects-volume">Effects Volume:</label>
+            <input type="range" id="effects-volume" name="effects-volume" min="0" max="100" value="50" />
+
+            <h2>Game Settings</h2>
+            <button id="reset-button">Reset All Data</button>
+          </div>
         </section>
       </main>
       <footer id="footer">

@@ -116,7 +116,11 @@
 - [x] impliment the fix
 - [x] test the fix
 
-## 20. Recenter item count
+## 20. Settings GUI
+
+- [x] Added GUI
+  - [x] Working Data Wiper
+  - [x] Good Style
 
 ## 21. Update Error Handling
 
