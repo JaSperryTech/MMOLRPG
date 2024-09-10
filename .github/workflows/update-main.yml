@@ -3,7 +3,7 @@ name: Auto Merge on Commit Message Starting with 'V:'
 on:
   push:
     branches:
-      - test # Monitor the 'test' branch for changes
+      - test  # Monitor the 'test' branch for changes
 
 jobs:
   auto-merge:
@@ -17,21 +17,31 @@ jobs:
         id: get_commit_message
         run: echo "commit_message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
 
-      - name: Check commit message and merge
-        if: startsWith(env.commit_message, 'V:') # Correctly access the commit message environment variable
+      - name: Check commit message and attempt merge
+        if: startsWith(env.commit_message, 'V:')  # Checks if the commit message starts with 'V:'
         run: |
           # Set up Git with bot credentials
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
+          
           # Fetch the latest changes from the main branch
           git fetch origin main
-
+          
           # Check out the main branch
           git checkout main
-
+          
           # Merge the test branch into the main branch, allowing unrelated histories
-          git merge origin/test --allow-unrelated-histories --no-ff -m "Merging changes from test branch with commit message: ${{ env.commit_message }}"
+          git merge origin/test --allow-unrelated-histories --no-ff -m "Merging changes from test branch with commit message: ${{ env.commit_message }}" || true
+          
+          # Attempt to resolve conflicts by favoring the test branch's changes
+          git merge --strategy-option theirs || true
+          
+          # Add and commit the resolved merge
+          git add .
+          git commit -m "Resolved merge conflicts by favoring changes from test branch"
 
           # Push the merged changes to the main branch
           git push origin main
+        shell: /usr/bin/bash -e {0}
+        env:
+          commit_message: V:
