@@ -1,25 +1,28 @@
-name: Create Pull Request
+name: Auto Merge on Commit Message Starting with 'V:'
 
 on:
   push:
     branches:
-      - test
+      - test # Specify the branch you want to monitor
 
 jobs:
-  create-pull-request:
+  auto-merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetch full history to ensure PR can be created
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main # The target branch for the pull request
-          branch: auto-pr/test-to-main # Temporary branch name for the PR
-          title: "Automated Pull Request from test to main"
-          body: "This PR was automatically created by the workflow."
+      - name: Get commit message
+        id: get_commit_message
+        run: echo "commit_message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Check commit message and merge
+        if: startsWith(github.env.commit_message, 'V:')
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git fetch origin
+          git checkout main
+          git merge origin/feature-branch  # Replace with the branch you want to merge
+          git push origin main
