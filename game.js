@@ -347,6 +347,7 @@ function updatePlayerStatsUI() {
     playerRebirthsElement: player.rebirths,
     playerDamageElement: player.damage,
     playerSkillPointsElement: player.skillPoints,
+    playerRebirthsBonusElement: player.rebirthsBonus,
   };
 
   for (const [element, value] of Object.entries(stats)) {
