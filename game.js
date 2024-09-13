@@ -50,10 +50,6 @@ startGame();
 
 function startGame() {
   try {
-    if (window.debug) {
-      console.log("Starting the game...");
-    }
-
     loadPlayerData(); // Load saved data
     renderInventory(player.inventory);
     renderEquipment(player.equipment);
@@ -64,37 +60,20 @@ function startGame() {
     updateMonster();
     updatePlayerStatsUI();
     setupEventListeners();
-
-    if (window.debug) {
-      console.log("Game started successfully.");
-    }
   } catch (error) {
-    if (window.debug) {
-      console.error("An error occurred while starting the game:", error);
-    } else {
-      // Optionally, show a generic error message to users
-      console.warn("An error occurred. Please try again later.");
-    }
+    // Optionally, show a generic error message to users
+    console.warn("An error occurred. Please try again later.");
   }
 }
 
 function savePlayerData() {
   try {
     localStorage.setItem("playerDebug", window.debug);
-    if (window.debug) {
-      console.log("Saved player debug option:", window.debug);
-    }
 
     // Separate storage operations with debugging and error handling
     localStorage.setItem("playerVersion", player.version);
-    if (window.debug) {
-      console.log("Saved player version:", player.version);
-    }
 
     localStorage.setItem("playerRebirths", player.rebirths);
-    if (window.debug) {
-      console.log("Saved player rebirths:", player.rebirths);
-    }
 
     localStorage.setItem("playerLevel", player.level);
     if (window.debug) {

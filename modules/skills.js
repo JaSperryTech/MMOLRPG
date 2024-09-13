@@ -30,11 +30,7 @@ let warriorUpgrades = {
       "Increase damage by 30% for 10 seconds after leveling up.",
       3,
       (player) => {
-        const originalDamage = player.damage;
         player.damage = Math.floor(player.damage * 1.3);
-        setTimeout(() => {
-          player.damage = originalDamage;
-        }, 10000);
       }
     ),
   },
@@ -44,10 +40,7 @@ let warriorUpgrades = {
       "Gain 5% more damage every minute, up to a maximum of 50%.",
       2,
       (player) => {
-        const interval = setInterval(() => {
-          player.damage = Math.floor(player.damage * 1.05);
-          if (player.damage >= player.damage * 1.5) clearInterval(interval);
-        }, 60000);
+        player.damage = Math.floor(player.damage * 1.5);
       }
     ),
   },
@@ -73,14 +66,10 @@ let mageUpgrades = {
   Elementalist: {
     ElementalSurge: new Upgrade(
       "Elemental Surge",
-      "Double damage for 5 seconds after casting a skill.",
+      "Double damage after casting a skill.",
       3,
       (player) => {
-        const originalDamage = player.damage;
         player.damage *= 2;
-        setTimeout(() => {
-          player.damage = originalDamage;
-        }, 5000);
       }
     ),
   },
@@ -90,11 +79,7 @@ let mageUpgrades = {
       "Gain 1% extra experience every minute, up to a maximum of 50%.",
       2,
       (player) => {
-        const interval = setInterval(() => {
-          player.experience *= 1.01;
-          if (player.experience >= player.experience * 1.5)
-            clearInterval(interval);
-        }, 60000);
+        player.experience *= 1.5;
       }
     ),
   },
@@ -126,16 +111,7 @@ let archerUpgrades = {
       "Increase damage by 25% for 5 seconds after gaining a certain amount of currency.",
       3,
       (player) => {
-        const originalDamage = player.damage;
-        const checkInterval = setInterval(() => {
-          if (player.cols >= 1000) {
-            player.damage = Math.floor(player.damage * 1.25);
-            setTimeout(() => {
-              player.damage = originalDamage;
-            }, 5000);
-            clearInterval(checkInterval);
-          }
-        }, 1000);
+        player.damage = Math.floor(player.damage * 1.25);
       }
     ),
   },
@@ -145,14 +121,7 @@ let archerUpgrades = {
       "Increase damage by 10% for every 10 minutes of idle time, up to a maximum of 50%.",
       2,
       (player) => {
-        const maxDamage = player.damage * 1.5;
-        const interval = setInterval(() => {
-          if (player.damage < maxDamage) {
-            player.damage = Math.floor(player.damage * 1.1);
-          } else {
-            clearInterval(interval);
-          }
-        }, 600000);
+        player.damage = Math.floor(player.damage * 1.1);
       }
     ),
   },
@@ -163,9 +132,6 @@ let archerUpgrades = {
       3,
       (player) => {
         player.damage = Math.floor(player.damage * 1.2);
-        const playInterval = setInterval(() => {
-          player.damage = Math.floor(player.damage * 1.05);
-        }, 300000);
       }
     ),
   },
