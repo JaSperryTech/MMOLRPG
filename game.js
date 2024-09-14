@@ -76,47 +76,25 @@ function savePlayerData() {
     localStorage.setItem("playerRebirths", player.rebirths);
 
     localStorage.setItem("playerLevel", player.level);
-    if (window.debug) {
-      console.log("Saved player level:", player.level);
-    }
 
     localStorage.setItem("playerExperience", player.experience);
-    if (window.debug) {
-      console.log("Saved player experience:", player.experience);
-    }
 
     localStorage.setItem("playerClass", player.class);
-    if (window.debug) {
-      console.log("Saved player class:", player.class);
-    }
 
     localStorage.setItem("playerCols", player.cols);
-    if (window.debug) {
-      console.log("Saved player cols:", player.cols);
-    }
 
     localStorage.setItem("playerDamage", player.damage);
-    if (window.debug) {
-      console.log("Saved player damage:", player.damage);
-    }
 
     localStorage.setItem("playerSkillPoints", player.skillPoints);
-    if (window.debug) {
-      console.log("Saved player skill points:", player.skillPoints);
-    }
+
 
     localStorage.setItem("playerValues", JSON.stringify(player.values));
-    if (window.debug) {
-      console.log("Saved player values:", player.values);
-    }
+
 
     localStorage.setItem(
       "playerHighestValues",
       JSON.stringify(player.highestValues)
     );
-    if (window.debug) {
-      console.log("Saved player highest values:", player.highestValues);
-    }
 
     // Filter out unlocked achievements
     const unlockedAchievements = Object.entries(
@@ -129,34 +107,17 @@ function savePlayerData() {
       "playerAchievements",
       JSON.stringify(unlockedAchievements)
     );
-    if (window.debug) {
-      console.log("Saved player achievements:", unlockedAchievements);
-    }
 
     localStorage.setItem("playerSkills", JSON.stringify(playerSkills));
-    if (window.debug) {
-      console.log("Saved player skills:", playerSkills);
-    }
 
     localStorage.setItem("playerInventory", JSON.stringify(player.inventory));
-    if (window.debug) {
-      console.log("Saved player inventory:", player.inventory);
-    }
+
 
     localStorage.setItem("playerEquipment", JSON.stringify(player.equipment));
-    if (window.debug) {
-      console.log("Saved player equipment:", player.equipment);
-    }
 
-    if (window.debug) {
-      console.log("All player data saved successfully.");
-    }
+
   } catch (error) {
-    if (window.debug) {
-      console.error("Failed to save player data:", error);
-    } else {
-      console.warn("An error occurred while saving player data.");
-    }
+    console.error("Failed to save player data:", error);
   }
 }
 
@@ -164,29 +125,14 @@ function initializeAchievements() {
   try {
     const defaultAchievements = achievements.getDefaultAchievements();
 
-    if (window.debug) {
-      console.log("Initializing achievements...");
-    }
-
     // Merge default achievements with existing achievements
-    Object.keys(defaultAchievements).forEach((key) => {
+    Object.keys(defaultAchievements).forEach(function (key) {
       if (!achievements.achievements[key]) {
         achievements.achievements[key] = defaultAchievements[key];
-        if (window.debug) {
-          console.log(`Added default achievement: ${key}`);
-        }
       }
     });
-
-    if (window.debug) {
-      console.log("Achievements initialization complete.");
-    }
   } catch (error) {
-    if (window.debug) {
-      console.error("Failed to initialize achievements:", error);
-    } else {
-      console.warn("An error occurred while initializing achievements.");
-    }
+    console.error("Failed to initialize achievements:", error);
   }
 }
 
@@ -194,28 +140,13 @@ function initializeSkills() {
   try {
     // Clone skills object to avoid mutating the original
     playerSkills = JSON.parse(JSON.stringify(skills));
-
-    // Debugging information
-    if (window.debug) {
-      console.log("Skills initialized:", playerSkills);
-    }
   } catch (error) {
-    if (window.debug) {
-      console.error("Failed to clone skills:", error);
-    } else {
-      console.warn("An error occurred while initializing skills.");
-    }
+    console.error("Failed to clone skills:", error);
   }
 }
 
 function loadPlayerData() {
   try {
-    // Read debug setting from localStorage
-    const debug = localStorage.getItem("playerDebug") === "true";
-    if (debug) {
-      window.debug = true;
-    }
-
     // Retrieve all player data from localStorage
     const playerData = {
       version: localStorage.getItem("playerVersion"),
@@ -236,11 +167,6 @@ function loadPlayerData() {
 
     // Handle outdated versions and reset if needed
     if (!playerData.version || outdatedVersions.includes(playerData.version)) {
-      if (window.debug) {
-        console.log(
-          "Outdated or missing version detected. Clearing localStorage."
-        );
-      }
       localStorage.clear();
       savePlayerData(); // Save default data after clearing
       return; // Exit early after reset
@@ -286,54 +212,27 @@ function loadPlayerData() {
 
     if (player.class === "null" || !playerData.class) {
       classSelectionElement.classList.remove("hidden");
-      if (window.debug) {
-        console.log("Class selection is visible.");
-      }
     } else {
       skillTreeElement.classList.remove("hidden");
       generateSkillTree();
-      if (window.debug) {
-        console.log("Skill tree is visible and generated.");
-      }
     }
   } catch (error) {
-    if (window.debug) {
-      console.error("Failed to load player data:", error);
-    } else {
-      console.warn("An error occurred while loading player data.");
-      let reset = prompt(
-        "There as been an Error with your player data. Would you allow the game to reset you player data? (Input:'yes' or 'no')",
-        "yes"
-      );
-      if ((reset = "yes")) {
-        localStorage.clear();
-      }
-    }
+    console.error("Failed to load player data:", error);
   }
 }
 
 function updateTextContent(element, text) {
   try {
-    if (window.debug) {
-      console.log("Updating text content:", { element, text });
-    }
-
     if (element && text !== undefined) {
       element.textContent = text;
     } else {
-      if (window.debug) {
-        console.warn("Invalid parameters for updateTextContent:", {
-          element,
-          text,
-        });
-      }
+      console.warn("Invalid parameters for updateTextContent:", {
+        element,
+        text,
+      });
     }
   } catch (error) {
-    if (window.debug) {
-      console.error("Failed to update text content:", error);
-    } else {
-      console.warn("An error occurred while updating text content.");
-    }
+    console.error("Failed to update text content:", error);
   }
 }
 
