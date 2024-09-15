@@ -72,7 +72,7 @@
 - [x] Implement the fix
 - [x] Test the fix
 
-## 13. Fix Achiement Display on Hover
+## 13. Fix Achievement Display on Hover
 
 - [x] Implement equipment functionality
 - [x] Test equipment system
@@ -90,7 +90,7 @@
 - [x] impliment the function
 - [x] test the function
 
-## 16. Infinate Item Stacking
+## 16. Infinite Item Stacking
 
 - [x] Design the system
 - [x] impliment the system
@@ -138,7 +138,7 @@
 
 ## 28. Enhanced Feedback
 
-## 29. Add Crafing Module
+## 29. Add Crafting Module
 
 ## 30. Add Quest Module
 
