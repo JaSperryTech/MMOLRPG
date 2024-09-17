@@ -905,4 +905,27 @@ function applyEffect(player, classType, specialization, upgradeName) {
   upgrade.unlocked = true;
 }
 
-setInterval(commands.checkCommands, 100); // Check every 100ms
+setInterval(commands.checkCommands, 5000); // Check every 100ms
+
+// Get the modal
+var modal = document.getElementById("alertModal");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// Display the modal after page load
+window.onload = function() {
+    modal.style.display = "block";
+}
+
+// Close the modal when the user clicks on <span> (x)
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// Close the modal when the user clicks outside of it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
