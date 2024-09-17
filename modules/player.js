@@ -8,6 +8,7 @@ export default class Player {
     this.cols = 0;
     this.damage = 1;
     this.rebirths = 0.0;
+    this.rebirthsBonus = 0.0;
     this.skillPoints = 0;
     this.inventory = [];
     this.equipment = {
@@ -182,6 +183,7 @@ export default class Player {
 
     // Optionally, apply rebirth bonuses
     player.applyRebirthBonuses(player);
+    player.rebirthBonus(player);
 
     // Optionally, you might want to reset or modify player.values
     player.values.round = 0;
@@ -190,6 +192,10 @@ export default class Player {
     player.highestValues.round = 0;
     player.highestValues.area = 1;
     player.highestValues.world = 1;
+  }
+
+  rebirthBonus(player) {
+    return player.rebirths * 1.05;
   }
 
   applyRebirthBonuses(player) {
